@@ -11,9 +11,11 @@ object NetworkLibraries {
 
     const val okHttp = "com.squareup.okhttp3:okhttp:${Versions.okHttp}"
     const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
+    const val retrofitConverter = "com.squareup.retrofit2:converter-gson:${Versions.retrofit}"
 }
 
 fun DependencyHandlerScope.networkDependencies() {
     "implementation"(NetworkLibraries.okHttp)
     "implementation"(NetworkLibraries.retrofit)
+    "implementation"(NetworkLibraries.retrofitConverter)
 }

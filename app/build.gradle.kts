@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("kotlin-android-extensions")
+    id("kotlin-kapt")
 }
 
 android {
@@ -43,6 +44,10 @@ val ktlint by configurations.creating
 
 dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
+
+    networkDependencies()
+
+    crossModuleCommonDependencies()
 
     commonDependencies()
 

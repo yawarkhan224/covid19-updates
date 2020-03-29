@@ -16,6 +16,9 @@ object Libraries {
 
         // Dependency Injection
         const val koin = "2.1.5"
+
+        // swipeRefreshLayout
+        const val swipeRefreshLayout = "1.0.0"
     }
 
     const val appCompat = "androidx.appcompat:appcompat:${Versions.jetpack}"
@@ -29,10 +32,12 @@ object Libraries {
     const val anNavUi = "androidx.navigation:navigation-ui:${Versions.navigation}"
     const val anNavFragment = "androidx.navigation:navigation-fragment:${Versions.navigation}"
 
-    // FOo ViewModel
+    // For Android Lifecycle, ViewModel, and LiveData
     const val anLifecycle = "androidx.lifecycle:lifecycle-extensions:${Versions.lifecycle}"
     const val anLifecycleViewModel =
         "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
+    const val anLifecycleLiveData =
+        "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.lifecycle}"
 
 
     const val anNavFragmentKtx =
@@ -43,15 +48,13 @@ object Libraries {
 
     // Dependecy Injection
     const val koinCore = "org.koin:koin-core:${Versions.koin}"
-
-    // Koin AndroidX Scope features
     const val koinScope = "org.koin:koin-androidx-scope:${Versions.koin}"
-
-    // Koin AndroidX ViewModel features
-    const val koinViewmodle = "org.koin:koin-androidx-viewmodel:${Versions.koin}"
-
-    // Koin AndroidX Fragment features
+    const val koinViewModle = "org.koin:koin-androidx-viewmodel:${Versions.koin}"
     const val koinFragment = "org.koin:koin-androidx-fragment:${Versions.koin}"
+
+    // swipeRefreshLayout
+    const val swipeRefreshLayout =
+        "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swipeRefreshLayout}"
 }
 
 fun DependencyHandlerScope.commonDependencies() {
@@ -70,10 +73,14 @@ fun DependencyHandlerScope.commonDependencies() {
     // For ViewModel
     "implementation"(Libraries.anLifecycle)
     "implementation"(Libraries.anLifecycleViewModel)
+    "implementation"(Libraries.anLifecycleLiveData)
 
     // Dependency Injection
     "implementation"(Libraries.koinCore)
     "implementation"(Libraries.koinScope)
     "implementation"(Libraries.koinFragment)
-    "implementation"(Libraries.koinViewmodle)
+    "implementation"(Libraries.koinViewModle)
+
+    // swipeRefreshLayout
+    "implementation"(Libraries.swipeRefreshLayout)
 }
