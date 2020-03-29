@@ -35,6 +35,10 @@ android {
 val ktlint by configurations.creating
 
 dependencies {
+    commonDependencies()
+
+    crossModuleCommonDependencies()
+
     networkDependencies()
 
     testDependencies()
