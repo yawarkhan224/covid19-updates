@@ -3,4 +3,31 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+
+    <!-- For All Countries List View-->
+    <string name="country">Country</string>
+    <string name="cases">Cases</string>
+    <string name="today_cases">Today\'s Cases</string>
+    <string name="deaths">Deaths</string>
+    <string name="today_deaths">Today\'s Deaths</string>
+    <string name="recovered">Recovered</string>
+    <string name="active">Active</string>
+    <string name="critical">Critical</string>
+    <string name="cases_per_one_million">Cases Per 1 Million</string>
+    <string name="deaths_per_one_million">Deaths Per 1 Million</string>
 </resources>
+
+    <!--
+
+        val country String = "",
+        val countryInfo CountryInfo,
+        val cases Int = 0,
+        val todayCases Int = 0,
+        val deaths Int = 0,
+        val todayDeaths Int = 0,
+        val recovered Int = 0,
+        val active Int = 0,
+        val critical Int = 0,
+        val casesPerOneMillion Double = 0.0,
+        val deathsPerOneMillion Double = 0.0
+        -->

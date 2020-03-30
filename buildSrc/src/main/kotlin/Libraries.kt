@@ -19,6 +19,9 @@ object Libraries {
 
         // swipeRefreshLayout
         const val swipeRefreshLayout = "1.0.0"
+
+        // image loading
+        const val coil = "0.9.5"
     }
 
     const val appCompat = "androidx.appcompat:appcompat:${Versions.jetpack}"
@@ -55,6 +58,10 @@ object Libraries {
     // swipeRefreshLayout
     const val swipeRefreshLayout =
         "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swipeRefreshLayout}"
+
+    // image loading
+    const val coil =
+        "io.coil-kt:coil:${Versions.coil}"
 }
 
 fun DependencyHandlerScope.commonDependencies() {
@@ -83,4 +90,7 @@ fun DependencyHandlerScope.commonDependencies() {
 
     // swipeRefreshLayout
     "implementation"(Libraries.swipeRefreshLayout)
+
+    // image loading
+    "implementation"(Libraries.coil)
 }

@@ -22,8 +22,8 @@ android {
         maybeCreate("release").apply {
             isMinifyEnabled = true
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro"
             )
         }
     }
@@ -60,15 +60,15 @@ dependencies {
     ktlint(CodeQualityLibraries.ktlint)
 }
 
-tasks.register<JavaExec>("ktlint") {
+tasks.register < JavaExec > ("ktlint") {
     group = "verification"
     description = "Check Kotlin code style."
     classpath = ktlint
     main = "com.pinterest.ktlint.Main"
     args(
-        "--reporter=plain",
-        "--reporter=checkstyle,output=$buildDir/ktlint/checkstyle-result.xml",
-        "--android"
+            "--reporter=plain",
+            "--reporter=checkstyle,output=$buildDir/ktlint/checkstyle-result.xml",
+            "--android"
     )
 }
 
@@ -76,14 +76,14 @@ tasks.named("check") {
     dependsOn(ktlint)
 }
 
-tasks.register<JavaExec>("ktlintFormat") {
+tasks.register < JavaExec > ("ktlintFormat") {
     group = "formatting"
     description = "Fix Kotlin code style deviations."
     classpath = ktlint
     main = "com.pinterest.ktlint.Main"
     args(
-        "--reporter=plain",
-        "--reporter=checkstyle,output=$buildDir/ktlint/checkstyle-result.xml",
-        "--android"
+            "--reporter=plain",
+            "--reporter=checkstyle,output=$buildDir/ktlint/checkstyle-result.xml",
+            "--android"
     )
 }
