@@ -1,5 +1,7 @@
-package com.aryk.covid.ui.home
+package com.aryk.covid.ui.detail
 
+import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,31 +14,31 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-interface HomeViewModelInputs {
+interface DetailViewModelInputs {
     fun onLoadData()
-    fun onCountrySelected(id: Int)
+    fun onCountryItemClicked(id: Int)
 }
 
 @ExperimentalCoroutinesApi
-interface HomeViewModelOutputs {
+interface DetailViewModelOutputs {
     val countriesData: MutableLiveData<List<CountryData>>
-    val selectedCountry: Channel<CountryData>
+    val selectedCountry: Channel<Int>
     val isLoading: ConflatedBroadcastChannel<Boolean>
 }
 
 @ExperimentalCoroutinesApi
-interface HomeViewModelInterface {
-    val inputs: HomeViewModelInputs
-    val outputs: HomeViewModelOutputs
+interface DetailViewModelInterface {
+    val inputs: DetailViewModelInputs
+    val outputs: DetailViewModelOutputs
 }
 
 @ExperimentalCoroutinesApi
-class HomeViewModel(
+class DetailViewModel(
     private val dataRepository: DataRepository
-) : ViewModel(), HomeViewModelInterface, HomeViewModelInputs, HomeViewModelOutputs {
+) : ViewModel(), DetailViewModelInterface, DetailViewModelInputs, DetailViewModelOutputs {
 
     override var countriesData: MutableLiveData<List<CountryData>> = MutableLiveData()
-    override val selectedCountry: Channel<CountryData> = Channel()
+    override val selectedCountry: Channel<Int> = Channel()
     override val isLoading: ConflatedBroadcastChannel<Boolean> = ConflatedBroadcastChannel()
 
     private val onLoadDataProperty: Channel<Int> = Channel(1)
@@ -47,18 +49,19 @@ class HomeViewModel(
         }
     }
 
-    private val onCountrySelectedProperty: Channel<Int> = Channel(1)
-    override fun onCountrySelected(id: Int) {
-        viewModelScope.launch {
-            onCountrySelectedProperty.send(id)
-        }
+    override fun onCountryItemClicked(id: Int) {
+        Log.d("", "")
     }
+
+    private val _text = MutableLiveData<String>().apply {
+        value = "This is home Fragment"
+    }
+    val text: LiveData<String> = _text
 
     override fun onCleared() {
         super.onCleared()
 
         onLoadDataProperty.cancel()
-        onCountrySelectedProperty.cancel()
     }
 
     init {
@@ -70,17 +73,6 @@ class HomeViewModel(
                     countriesData.value = nonNullList
                 } ?: kotlin.run {
                     isLoading.send(false)
-                    // TODO: Handle error for data loading failure
-                }
-            }
-        }
-
-        viewModelScope.launch {
-            onCountrySelectedProperty.consumeEach { selectedIndex ->
-                countriesData.value?.let { countries ->
-                    selectedCountry.send(countries[selectedIndex])
-                } ?: run {
-                    // TODO: Handle Error for empty country list
                 }
             }
         }

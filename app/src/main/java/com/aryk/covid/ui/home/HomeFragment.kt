@@ -13,14 +13,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.aryk.covid.R
 import com.aryk.covid.helper.ItemClickSupport
+import com.aryk.covid.ui.detail.DetailFragment
 import com.aryk.covid.ui.home.adapter.CountryListAdapter
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @ExperimentalCoroutinesApi
 class HomeFragment : Fragment() {
+    companion object {
+        private const val FRAGMENT_TAG = "home_fragment"
+    }
 
     private val homeViewModel: HomeViewModel by viewModel()
     private lateinit var countryListAdapter: CountryListAdapter
@@ -57,7 +62,7 @@ class HomeFragment : Fragment() {
                             return
                         }
 
-                        homeViewModel.inputs.onCountryItemClicked(position)
+                        homeViewModel.inputs.onCountrySelected(position)
                     }
                 }
         }
@@ -78,13 +83,27 @@ class HomeFragment : Fragment() {
             countryListAdapter.notifyDataSetChanged()
         })
 
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             homeViewModel.outputs.isLoading.consumeEach { isLoading ->
                 progressBar.visibility = if (isLoading) {
                     View.VISIBLE
                 } else {
                     View.GONE
                 }
+            }
+        }
+
+        lifecycleScope.launch {
+            homeViewModel.outputs.selectedCountry.consumeEach { countryData ->
+                parentFragmentManager
+                    .beginTransaction()
+                    .addToBackStack(FRAGMENT_TAG)
+                    .replace(
+                        R.id.nav_host_fragment,
+                        DetailFragment.newInstance(countryData),
+                        "detail_fragment"
+                    )
+                    .commit()
             }
         }
     }
