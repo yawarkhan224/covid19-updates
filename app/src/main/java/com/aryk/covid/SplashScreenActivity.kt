@@ -6,6 +6,10 @@ import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
 
 class SplashScreenActivity : AppCompatActivity() {
+    companion object {
+        private const val SPLASH_SCREEN_DELAY_MS = 500L
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -14,8 +18,7 @@ class SplashScreenActivity : AppCompatActivity() {
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
                 // close this activity
-            }, 2000
+            }, SPLASH_SCREEN_DELAY_MS
         )
     }
-
 }
