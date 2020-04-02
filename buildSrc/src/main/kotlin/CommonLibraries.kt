@@ -4,8 +4,6 @@ import org.gradle.kotlin.dsl.DependencyHandlerScope
  * This file contains all common required gradle dependencies for this project
  */
 object CommonLibraries {
-    private const val kotlinVersion = "1.3.70"
-
     object Versions {
         // gson
         const val gson = "2.8.6"

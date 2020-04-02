@@ -31,7 +31,6 @@ class CountryListAdapter :
         holder.recoveredValue.text = country.recovered.toString()
     }
 
-
     class CountryDataViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         internal val countryName = view.countryName
         internal val countryFlag = view.countryFlag
@@ -40,4 +39,3 @@ class CountryListAdapter :
         internal val recoveredValue = view.recoveredValue
     }
 }
-

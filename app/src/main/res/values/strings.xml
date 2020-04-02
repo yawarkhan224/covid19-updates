@@ -4,6 +4,10 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
 
+    <!-- For Splash Screen-->
+    <string name="stayHome">#stayHome</string>
+    <string name="stayHealthy">#stayHealthy</string>
+
     <!-- For All Countries List View-->
     <string name="country">Country</string>
     <string name="cases">Cases</string>
