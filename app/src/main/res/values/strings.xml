@@ -17,8 +17,8 @@
     <string name="recovered">Recovered</string>
     <string name="active">Active</string>
     <string name="critical">Critical</string>
-    <string name="cases_per_one_million">Cases Per 1 Million</string>
-    <string name="deaths_per_one_million">Deaths Per 1 Million</string>
+    <string name="cases_per_one_million">Cases Per 1M</string>
+    <string name="deaths_per_one_million">Deaths Per 1M</string>
 </resources>
 
     <!--

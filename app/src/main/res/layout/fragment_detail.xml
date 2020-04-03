@@ -18,31 +18,50 @@
 
     <ImageView
         android:id="@+id/flag"
-        android:layout_width="0dp"
-        android:layout_height="96dp"
+        android:layout_width="96dp"
+        android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginEnd="16dp"
         android:scaleType="fitXY"
         android:src="@drawable/ic_arrow_right_24dp"
-        app:layout_constraintEnd_toStartOf="@+id/verticalCenter"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/horizontalDivider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/frenchGrey"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/country" />
+
+    <View
+        android:id="@+id/verticalDivider"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/frenchGrey"
+        app:layout_constraintBottom_toBottomOf="@+id/criticalValue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/country" />
 
     <TextView
         android:id="@+id/country"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/country"
-        android:textAlignment="textStart"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-        app:layout_constraintBottom_toBottomOf="@+id/flag"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/verticalCenter"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/flag" />
 
     <TextView
         android:id="@+id/cases"
@@ -56,10 +75,28 @@
         android:minLines="2"
         android:text="@string/cases"
         android:textAlignment="textStart"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         app:layout_constraintEnd_toStartOf="@+id/casesValue"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/flag" />
+        app:layout_constraintTop_toBottomOf="@+id/horizontalDivider" />
+
+    <TextView
+        android:id="@+id/casesValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:minLines="2"
+        android:textAlignment="textEnd"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textColor="@android:color/holo_orange_dark"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/verticalCenter"
+        app:layout_constraintStart_toEndOf="@+id/cases"
+        app:layout_constraintTop_toTopOf="@+id/cases"
+        tools:text="TextView" />
 
     <TextView
         android:id="@+id/deaths"
@@ -73,10 +110,28 @@
         android:minLines="2"
         android:text="@string/deaths"
         android:textAlignment="textStart"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         app:layout_constraintEnd_toStartOf="@+id/deathsValue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cases" />
+
+    <TextView
+        android:id="@+id/deathsValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:minLines="2"
+        android:textAlignment="textEnd"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textColor="@android:color/holo_red_dark"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/verticalCenter"
+        app:layout_constraintStart_toEndOf="@+id/deaths"
+        app:layout_constraintTop_toTopOf="@+id/deaths"
+        tools:text="TextView" />
 
     <TextView
         android:id="@+id/recovered"
@@ -90,10 +145,28 @@
         android:minLines="2"
         android:text="@string/recovered"
         android:textAlignment="textStart"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         app:layout_constraintEnd_toStartOf="@+id/recoveredCasesValue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/deaths" />
+
+    <TextView
+        android:id="@+id/recoveredCasesValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:minLines="2"
+        android:textAlignment="textEnd"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textColor="@android:color/holo_green_dark"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/verticalCenter"
+        app:layout_constraintStart_toEndOf="@+id/recovered"
+        app:layout_constraintTop_toTopOf="@+id/recovered"
+        tools:text="TextView" />
 
     <TextView
         android:id="@+id/active"
@@ -107,10 +180,28 @@
         android:minLines="2"
         android:text="@string/active"
         android:textAlignment="textStart"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         app:layout_constraintEnd_toStartOf="@+id/activeValue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recovered" />
+
+    <TextView
+        android:id="@+id/activeValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:minLines="2"
+        android:textAlignment="textEnd"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textColor="@android:color/holo_orange_light"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/verticalCenter"
+        app:layout_constraintStart_toEndOf="@+id/active"
+        app:layout_constraintTop_toTopOf="@+id/active"
+        tools:text="TextView" />
 
     <TextView
         android:id="@+id/critical"
@@ -124,77 +215,44 @@
         android:minLines="2"
         android:text="@string/critical"
         android:textAlignment="textStart"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         app:layout_constraintEnd_toStartOf="@+id/criticalValue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/active" />
 
     <TextView
+        android:id="@+id/criticalValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:minLines="2"
+        android:textAlignment="textEnd"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textColor="@android:color/holo_red_light"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/verticalCenter"
+        app:layout_constraintStart_toEndOf="@+id/critical"
+        app:layout_constraintTop_toTopOf="@+id/critical"
+        tools:text="TextView" />
+
+    <TextView
         android:id="@+id/todayCases"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="2dp"
         android:ellipsize="end"
         android:maxLines="2"
         android:minLines="2"
         android:text="@string/today_cases"
         android:textAlignment="textStart"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         app:layout_constraintEnd_toStartOf="@+id/todayCasesValue"
         app:layout_constraintStart_toEndOf="@id/verticalCenter"
         app:layout_constraintTop_toTopOf="@+id/casesValue" />
-
-    <TextView
-        android:id="@+id/todayDeaths"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="2dp"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:minLines="2"
-        android:text="@string/today_deaths"
-        android:textAlignment="textStart"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-        app:layout_constraintEnd_toStartOf="@+id/todayDeathsValue"
-        app:layout_constraintStart_toStartOf="@+id/verticalCenter"
-        app:layout_constraintTop_toBottomOf="@+id/todayCases" />
-
-    <TextView
-        android:id="@+id/casesPerMillion"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="2dp"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:minLines="2"
-        android:text="@string/cases_per_one_million"
-        android:textAlignment="textStart"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-        app:layout_constraintEnd_toStartOf="@+id/casesPerMillionValue"
-        app:layout_constraintStart_toStartOf="@+id/verticalCenter"
-        app:layout_constraintTop_toBottomOf="@+id/todayDeaths" />
-
-    <TextView
-        android:id="@+id/deathsPerMillion"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="2dp"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:minLines="2"
-        android:text="@string/deaths"
-        android:textAlignment="textStart"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-        app:layout_constraintEnd_toStartOf="@+id/deathsPerMillionValue"
-        app:layout_constraintStart_toStartOf="@+id/verticalCenter"
-        app:layout_constraintTop_toBottomOf="@+id/casesPerMillion" />
 
     <TextView
         android:id="@+id/todayCasesValue"
@@ -205,12 +263,31 @@
         android:ellipsize="end"
         android:maxLines="2"
         android:minLines="2"
-        tools:text="TextView"
         android:textAlignment="textEnd"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textColor="@android:color/holo_orange_dark"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/todayCases"
-        app:layout_constraintTop_toTopOf="@+id/todayCases" />
+        app:layout_constraintTop_toTopOf="@+id/todayCases"
+        tools:text="TextView" />
+
+    <TextView
+        android:id="@+id/todayDeaths"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="2dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:minLines="2"
+        android:text="@string/today_deaths"
+        android:textAlignment="textStart"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        app:layout_constraintEnd_toStartOf="@+id/todayDeathsValue"
+        app:layout_constraintStart_toStartOf="@+id/verticalCenter"
+        app:layout_constraintTop_toBottomOf="@+id/todayCases" />
 
     <TextView
         android:id="@+id/todayDeathsValue"
@@ -221,12 +298,31 @@
         android:ellipsize="end"
         android:maxLines="2"
         android:minLines="2"
-        tools:text="TextView"
         android:textAlignment="textEnd"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textColor="@android:color/holo_red_dark"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/todayDeaths"
-        app:layout_constraintTop_toTopOf="@+id/todayDeaths" />
+        app:layout_constraintTop_toTopOf="@+id/todayDeaths"
+        tools:text="TextView" />
+
+    <TextView
+        android:id="@+id/casesPerMillion"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="2dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:minLines="2"
+        android:text="@string/cases_per_one_million"
+        android:textAlignment="textStart"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        app:layout_constraintEnd_toStartOf="@+id/casesPerMillionValue"
+        app:layout_constraintStart_toStartOf="@+id/verticalCenter"
+        app:layout_constraintTop_toBottomOf="@+id/todayDeaths" />
 
     <TextView
         android:id="@+id/casesPerMillionValue"
@@ -237,12 +333,30 @@
         android:ellipsize="end"
         android:maxLines="2"
         android:minLines="2"
-        tools:text="TextView"
         android:textAlignment="textEnd"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/casesPerMillion"
-        app:layout_constraintTop_toTopOf="@+id/casesPerMillion" />
+        app:layout_constraintTop_toTopOf="@+id/casesPerMillion"
+        tools:text="TextView" />
+
+    <TextView
+        android:id="@+id/deathsPerMillion"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="2dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:minLines="2"
+        android:text="@string/deaths_per_one_million"
+        android:textAlignment="textStart"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        app:layout_constraintEnd_toStartOf="@+id/deathsPerMillionValue"
+        app:layout_constraintStart_toStartOf="@+id/verticalCenter"
+        app:layout_constraintTop_toBottomOf="@+id/casesPerMillion" />
 
     <TextView
         android:id="@+id/deathsPerMillionValue"
@@ -253,90 +367,11 @@
         android:ellipsize="end"
         android:maxLines="2"
         android:minLines="2"
-        tools:text="TextView"
         android:textAlignment="textEnd"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/deathsPerMillion"
-        app:layout_constraintTop_toTopOf="@+id/deathsPerMillion" />
-
-    <TextView
-        android:id="@+id/casesValue"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginEnd="4dp"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:minLines="2"
-        tools:text="TextView"
-        android:textAlignment="textEnd"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-        app:layout_constraintEnd_toStartOf="@+id/verticalCenter"
-        app:layout_constraintStart_toEndOf="@+id/cases"
-        app:layout_constraintTop_toTopOf="@+id/cases" />
-
-    <TextView
-        android:id="@+id/deathsValue"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginEnd="4dp"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:minLines="2"
-        tools:text="TextView"
-        android:textAlignment="textEnd"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-        app:layout_constraintEnd_toStartOf="@+id/verticalCenter"
-        app:layout_constraintStart_toEndOf="@+id/deaths"
-        app:layout_constraintTop_toTopOf="@+id/deaths" />
-
-    <TextView
-        android:id="@+id/recoveredCasesValue"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginEnd="4dp"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:minLines="2"
-        android:textAlignment="textEnd"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-        app:layout_constraintEnd_toStartOf="@+id/verticalCenter"
-        app:layout_constraintStart_toEndOf="@+id/recovered"
-        app:layout_constraintTop_toTopOf="@+id/recovered"
-        tools:text="TextView" />
-
-    <TextView
-        android:id="@+id/activeValue"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginEnd="4dp"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:minLines="2"
-        android:textAlignment="textEnd"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-        app:layout_constraintEnd_toStartOf="@+id/verticalCenter"
-        app:layout_constraintStart_toEndOf="@+id/active"
-        app:layout_constraintTop_toTopOf="@+id/active"
-        tools:text="TextView" />
-
-    <TextView
-        android:id="@+id/criticalValue"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginEnd="4dp"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:minLines="2"
-        android:textAlignment="textEnd"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-        app:layout_constraintEnd_toStartOf="@+id/verticalCenter"
-        app:layout_constraintStart_toEndOf="@+id/critical"
-        app:layout_constraintTop_toTopOf="@+id/critical"
+        app:layout_constraintTop_toTopOf="@+id/deathsPerMillion"
         tools:text="TextView" />
 </androidx.constraintlayout.widget.ConstraintLayout>
