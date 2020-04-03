@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,8 +16,6 @@ import com.aryk.covid.ui.detail.DetailFragment
 import com.aryk.covid.ui.home.adapter.CountryListAdapter
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @ExperimentalCoroutinesApi
@@ -78,33 +75,35 @@ class HomeFragment : Fragment() {
             countriesSwipeRefresh.isRefreshing = false
         }
 
-        homeViewModel.outputs.countriesData.observe(viewLifecycleOwner, Observer {
-            countryListAdapter.submitList(it)
-            countryListAdapter.notifyDataSetChanged()
+        homeViewModel.outputs.countriesData.observe(viewLifecycleOwner, Observer { event ->
+            event.getContentIfNotHandled()?.let {
+                countryListAdapter.submitList(it)
+                countryListAdapter.notifyDataSetChanged()
+            }
         })
 
-        lifecycleScope.launch {
-            homeViewModel.outputs.isLoading.consumeEach { isLoading ->
+        homeViewModel.outputs.isLoading.observe(viewLifecycleOwner, Observer { event ->
+            event.getContentIfNotHandled()?.let { isLoading ->
                 progressBar.visibility = if (isLoading) {
                     View.VISIBLE
                 } else {
                     View.GONE
                 }
             }
-        }
+        })
 
-        lifecycleScope.launch {
-            homeViewModel.outputs.selectedCountry.consumeEach { countryData ->
+        homeViewModel.outputs.selectedCountry.observe(viewLifecycleOwner, Observer { event ->
+            event.getContentIfNotHandled()?.let { countryData ->
                 parentFragmentManager
                     .beginTransaction()
                     .addToBackStack(FRAGMENT_TAG)
-                    .replace(
+                    .add(
                         R.id.nav_host_fragment,
                         DetailFragment.newInstance(countryData),
                         "detail_fragment"
                     )
                     .commit()
             }
-        }
+        })
     }
 }
