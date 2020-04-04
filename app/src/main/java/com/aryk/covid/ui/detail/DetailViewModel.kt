@@ -68,7 +68,7 @@ class DetailViewModel(
             onLoadDataProperty.consumeEach {
                 val data: CountryData? =
                     dataRepository.getCountryData(
-                        countryData.value!!.peekContent().countryInfo.iso2
+                        countryData.value!!.peekContent().country
                     )
 
                 data?.let { nonNullData ->
