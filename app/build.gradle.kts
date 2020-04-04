@@ -55,6 +55,8 @@ dependencies {
 
     androidTestDependencies()
 
+    graphicsDependencies()
+
     implementation(project(":network"))
 
     ktlint(CodeQualityLibraries.ktlint)
