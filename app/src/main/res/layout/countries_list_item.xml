@@ -10,7 +10,7 @@
         android:id="@+id/countryName"
         android:layout_width="48dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:rotation="270"
@@ -21,15 +21,16 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Country Name" />
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/countryFlag"
         android:layout_width="48dp"
-        android:layout_height="24dp"
+        android:layout_height="48dp"
         android:layout_marginStart="2dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="4dp"
-        android:scaleType="fitXY"
+        app:civ_border_width="1dp"
+        app:civ_border_color="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/totalCases"
         app:layout_constraintStart_toEndOf="@+id/countryName"
@@ -42,7 +43,7 @@
         android:layout_height="24dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="4dp"
         android:textAlignment="textEnd"
         app:layout_constraintBottom_toBottomOf="parent"

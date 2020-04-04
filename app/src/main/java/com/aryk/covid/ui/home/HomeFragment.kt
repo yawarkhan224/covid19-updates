@@ -94,13 +94,13 @@ class HomeFragment : Fragment() {
         })
 
         homeViewModel.outputs.selectedCountry.observe(viewLifecycleOwner, Observer { event ->
-            event.getContentIfNotHandled()?.let { countryData ->
+            event.getContentIfNotHandled()?.let { (countryData, historicalData) ->
                 parentFragmentManager
                     .beginTransaction()
                     .addToBackStack(FRAGMENT_TAG)
                     .add(
                         R.id.nav_host_fragment,
-                        DetailFragment.newInstance(countryData),
+                        DetailFragment.newInstance(countryData, historicalData),
                         "detail_fragment"
                     )
                     .commit()
