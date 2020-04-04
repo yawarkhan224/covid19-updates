@@ -12,6 +12,7 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 
 interface DetailViewModelInputs {
+    fun onLoadData()
     fun onDataAvailable(data: CountryData)
 }
 
@@ -27,12 +28,21 @@ interface DetailViewModelInterface {
     val outputs: DetailViewModelOutputs
 }
 
+@SuppressWarnings("ForbiddenComment")
 @ExperimentalCoroutinesApi
 class DetailViewModel(
     private val dataRepository: DataRepository
 ) : ViewModel(), DetailViewModelInterface, DetailViewModelInputs, DetailViewModelOutputs {
     override val countryData: MutableLiveData<Event<CountryData>> = MutableLiveData()
     override val isLoading: MutableLiveData<Event<Boolean>> = MutableLiveData()
+
+    private val onLoadDataProperty: Channel<Unit> = Channel(1)
+    override fun onLoadData() {
+        viewModelScope.launch {
+            isLoading.value = Event(true)
+            onLoadDataProperty.send(Unit)
+        }
+    }
 
     private val onDataAvailableProperty: Channel<CountryData> = Channel(1)
     override fun onDataAvailable(data: CountryData) {
@@ -51,6 +61,23 @@ class DetailViewModel(
         viewModelScope.launch {
             onDataAvailableProperty.consumeEach { data ->
                 countryData.value = Event(data)
+            }
+        }
+
+        viewModelScope.launch {
+            onLoadDataProperty.consumeEach {
+                val data: CountryData? =
+                    dataRepository.getCountryData(
+                        countryData.value!!.peekContent().countryInfo.iso2
+                    )
+
+                data?.let { nonNullData ->
+                    isLoading.value = Event(false)
+                    countryData.value = Event(nonNullData)
+                } ?: kotlin.run {
+                    isLoading.value = Event(false)
+                    // TODO: Handle error for data loading failure
+                }
             }
         }
     }

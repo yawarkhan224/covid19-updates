@@ -8,11 +8,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import coil.api.load
 import com.aryk.covid.R
+import com.aryk.covid.helper.TimeHelper
 import com.aryk.network.models.data.CountryData
-import kotlinx.android.synthetic.main.countries_list_item.*
 import kotlinx.android.synthetic.main.fragment_detail.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.Locale
 
 @SuppressWarnings("ForbiddenComment")
 @ExperimentalCoroutinesApi
@@ -30,6 +32,7 @@ class DetailFragment : Fragment() {
     }
 
     private val detailViewModel: DetailViewModel by viewModel()
+    private val timeHelper: TimeHelper by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,8 +52,27 @@ class DetailFragment : Fragment() {
             // TODO: Data Missing, Handle this case
         }
 
+        detailSwipeRefresh.setOnRefreshListener {
+            casesValue.text = "_"
+            todayCasesValue.text = "_"
+
+            deathsValue.text = "_"
+            todayDeathsValue.text = "_"
+
+            recoveredCasesValue.text = "_"
+            activeValue.text = "_"
+            criticalValue.text = "_"
+
+            casesPerMillionValue.text = "_"
+            deathsPerMillionValue.text = "_"
+
+            detailViewModel.inputs.onLoadData()
+            detailSwipeRefresh.isRefreshing = false
+        }
+
         detailViewModel.outputs.countryData.observe(viewLifecycleOwner, Observer { event ->
             event.getContentIfNotHandled()?.let { countryData ->
+
                 country.text = countryData.country
 
                 casesValue.text = countryData.cases.toString()
@@ -65,6 +87,14 @@ class DetailFragment : Fragment() {
 
                 casesPerMillionValue.text = countryData.casesPerOneMillion.toString()
                 deathsPerMillionValue.text = countryData.deathsPerOneMillion.toString()
+
+                updatedAt.text = getString(
+                    R.string.last_updated,
+                    timeHelper.unixTimeStampInSecondsToLongDateTime(
+                        countryData.updated.toLong(),
+                        Locale.getDefault()
+                    )
+                )
             }
         })
     }

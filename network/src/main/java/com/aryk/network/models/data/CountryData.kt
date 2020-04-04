@@ -15,5 +15,6 @@ data class CountryData(
     val active: Int = 0,
     val critical: Int = 0,
     val casesPerOneMillion: Double = 0.0,
-    val deathsPerOneMillion: Double = 0.0
+    val deathsPerOneMillion: Double = 0.0,
+    val updated: String = ""
 ) : Parcelable

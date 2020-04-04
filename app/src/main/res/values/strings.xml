@@ -19,19 +19,8 @@
     <string name="critical">Critical</string>
     <string name="cases_per_one_million">Cases Per 1M</string>
     <string name="deaths_per_one_million">Deaths Per 1M</string>
+    <string name="last_updated">Updated at: %s</string>
+
+    <!-- For Detail View-->
+    <string name="show_graphical_data">Show Graphical Data</string>
 </resources>
-
-    <!--
-
-        val country String = "",
-        val countryInfo CountryInfo,
-        val cases Int = 0,
-        val todayCases Int = 0,
-        val deaths Int = 0,
-        val todayDeaths Int = 0,
-        val recovered Int = 0,
-        val active Int = 0,
-        val critical Int = 0,
-        val casesPerOneMillion Double = 0.0,
-        val deathsPerOneMillion Double = 0.0
-        -->
