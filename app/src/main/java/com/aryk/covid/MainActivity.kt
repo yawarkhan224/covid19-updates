@@ -3,9 +3,10 @@ package com.aryk.covid
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.aryk.covid.ui.home.HomeFragment
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 class MainActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         // Make sure this is before calling super.onCreate
         setTheme(R.style.AppTheme)
