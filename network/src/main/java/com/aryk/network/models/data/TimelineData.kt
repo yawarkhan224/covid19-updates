@@ -6,5 +6,6 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class TimelineData(
     val cases: Map<String, Int> = mutableMapOf(),
-    val deaths: Map<String, Int> = mutableMapOf()
+    val deaths: Map<String, Int> = mutableMapOf(),
+    val recovered: Map<String, Int> = mutableMapOf()
 ) : Parcelable

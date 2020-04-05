@@ -9,22 +9,34 @@ import androidx.lifecycle.Observer
 import coil.api.load
 import com.aryk.covid.R
 import com.aryk.covid.helper.TimeHelper
+import com.aryk.covid.models.FormattedHistoricalData
 import com.aryk.network.models.data.CountryData
+import com.aryk.network.models.data.CountryHistoricalData
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.android.synthetic.main.fragment_detail.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.Locale
+import java.util.*
 
 @SuppressWarnings("ForbiddenComment")
 @ExperimentalCoroutinesApi
 class DetailFragment : Fragment() {
     companion object {
         private const val ARG_SELECTED_COUNTRY = "selected_country"
+        private const val ARG_HISTORICAL_DATA = "historical_data"
 
-        fun newInstance(country: CountryData): DetailFragment {
+        fun newInstance(
+            country: CountryData,
+            historicalData: FormattedHistoricalData?
+        ): DetailFragment {
             val args: Bundle = Bundle()
             args.putParcelable(ARG_SELECTED_COUNTRY, country)
+            args.putParcelable(ARG_HISTORICAL_DATA, historicalData)
             val fragment = DetailFragment()
             fragment.arguments = args
             return fragment
@@ -47,7 +59,10 @@ class DetailFragment : Fragment() {
 
         arguments?.getParcelable<CountryData>(ARG_SELECTED_COUNTRY)?.let {
             flag.load(it.countryInfo.flag)
-            detailViewModel.inputs.onDataAvailable(it)
+            detailViewModel.inputs.onDataAvailable(
+                it,
+                arguments?.getParcelable<FormattedHistoricalData>(ARG_HISTORICAL_DATA)
+            )
         } ?: kotlin.run {
             // TODO: Data Missing, Handle this case
         }
@@ -97,5 +112,53 @@ class DetailFragment : Fragment() {
                 )
             }
         })
+
+        showGraphicalData.setOnClickListener {
+            detailViewModel.inputs.onShowHistoricalDataClicked()
+        }
+
+        detailViewModel.outputs.showHistoricalData.observe(viewLifecycleOwner, Observer { event ->
+            event.getContentIfNotHandled()?.let { countryData ->
+
+                showGraphicalData.visibility = View.GONE
+                historicalDataLayout.visibility = View.VISIBLE
+            }
+        })
+
+        detailViewModel.outputs.historicalCountryData.observe(
+            viewLifecycleOwner,
+            Observer { event ->
+                event.getContentIfNotHandled()?.let { (historicalData, generateData) ->
+                    if (generateData && historicalData != null) {
+                        historicalData.let { map ->
+                            val c = map.cases.keys
+                            val d = map.deaths.keys
+                            val r = map.recovered.keys
+
+                            var casesSet:MutableList<Entry> = mutableListOf()
+                            var deathsSet:MutableList<Entry> = mutableListOf()
+                            var recoveredSet:MutableList<Entry> = mutableListOf()
+                            c.forEach {
+                                casesSet.add(Entry(it.toFloat(), map.cases[it]!!.toFloat()))
+                            }
+                            d.forEach {
+                                deathsSet.add(Entry(it.toFloat(), map.deaths[it]!!.toFloat()))
+                            }
+                            r.forEach {
+                                recoveredSet.add(Entry(it.toFloat(), map.recovered[it]!!.toFloat()))
+                            }
+
+
+                            lineChart.data = LineData(
+                                LineDataSet(casesSet,"cases"),
+                                LineDataSet(deathsSet,"deaths"),
+                                LineDataSet(recoveredSet,"recovered")
+                            )
+                        }
+                    } else {
+                        // TODO , Show message that data is not available yet
+                    }
+                }
+            })
     }
 }
