@@ -7,7 +7,6 @@ import com.aryk.covid.helper.Event
 import com.aryk.covid.models.FormattedHistoricalData
 import com.aryk.covid.repositories.DataRepository
 import com.aryk.network.models.data.CountryData
-import com.aryk.network.models.data.CountryHistoricalData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach

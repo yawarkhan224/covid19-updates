@@ -11,9 +11,6 @@ import com.aryk.covid.R
 import com.aryk.covid.helper.TimeHelper
 import com.aryk.covid.models.FormattedHistoricalData
 import com.aryk.network.models.data.CountryData
-import com.aryk.network.models.data.CountryHistoricalData
-import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -21,9 +18,9 @@ import kotlinx.android.synthetic.main.fragment_detail.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.*
+import java.util.Locale
 
-@SuppressWarnings("ForbiddenComment")
+@SuppressWarnings("ForbiddenComment","LongMethod")
 @ExperimentalCoroutinesApi
 class DetailFragment : Fragment() {
     companion object {
@@ -135,9 +132,9 @@ class DetailFragment : Fragment() {
                             val d = map.deaths.keys
                             val r = map.recovered.keys
 
-                            var casesSet:MutableList<Entry> = mutableListOf()
-                            var deathsSet:MutableList<Entry> = mutableListOf()
-                            var recoveredSet:MutableList<Entry> = mutableListOf()
+                            val casesSet: MutableList<Entry> = mutableListOf()
+                            val deathsSet: MutableList<Entry> = mutableListOf()
+                            val recoveredSet: MutableList<Entry> = mutableListOf()
                             c.forEach {
                                 casesSet.add(Entry(it.toFloat(), map.cases[it]!!.toFloat()))
                             }
@@ -148,11 +145,10 @@ class DetailFragment : Fragment() {
                                 recoveredSet.add(Entry(it.toFloat(), map.recovered[it]!!.toFloat()))
                             }
 
-
                             lineChart.data = LineData(
-                                LineDataSet(casesSet,"cases"),
-                                LineDataSet(deathsSet,"deaths"),
-                                LineDataSet(recoveredSet,"recovered")
+                                LineDataSet(casesSet, "cases"),
+                                LineDataSet(deathsSet, "deaths"),
+                                LineDataSet(recoveredSet, "recovered")
                             )
                         }
                     } else {

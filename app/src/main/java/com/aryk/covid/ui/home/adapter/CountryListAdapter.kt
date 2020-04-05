@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.api.load
 import com.aryk.covid.R
+import com.aryk.covid.extensions.toShorterFormatString
 import com.aryk.network.models.data.CountryData
 import kotlinx.android.synthetic.main.countries_list_item.view.*
 
@@ -26,9 +27,9 @@ class CountryListAdapter :
 
         holder.countryFlag.load(country.countryInfo.flag)
         holder.countryName.text = country.countryInfo.iso3
-        holder.totalCasesValue.text = country.cases.toString()
-        holder.totalDeathsValue.text = country.deaths.toString()
-        holder.recoveredValue.text = country.recovered.toString()
+        holder.totalCasesValue.text = country.cases.toShorterFormatString()
+        holder.totalDeathsValue.text = country.deaths.toShorterFormatString()
+        holder.recoveredValue.text = country.recovered.toShorterFormatString()
     }
 
     class CountryDataViewHolder(view: View) : RecyclerView.ViewHolder(view) {
