@@ -3,6 +3,9 @@ package com.aryk.covid.ui.home
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aryk.covid.extensions.combineLatest
+import com.aryk.covid.extensions.mergeReduce
+import com.aryk.covid.extensions.toFormattedData
 import com.aryk.covid.helper.Event
 import com.aryk.covid.models.FormattedHistoricalData
 import com.aryk.covid.repositories.DataRepository
@@ -84,7 +87,6 @@ class HomeViewModel(
             onLoadDataProperty.consumeEach {
                 val data: List<CountryData>? = dataRepository.getAllCountriesData(null)
                 data?.let { nonNullList ->
-                    isLoading.value = Event(false)
                     countriesData.value = Event(nonNullList)
                 } ?: kotlin.run {
                     isLoading.value = Event(false)
@@ -106,21 +108,43 @@ class HomeViewModel(
             }
         }
 
+        countriesHistoricalData.combineLatest(countriesData).observeForever {
+            isLoading.value = Event(false)
+        }
         viewModelScope.launch {
             onCountrySelectedProperty.consumeEach { selectedIndex ->
                 countriesData.value?.let { countries ->
                     val selectedCountryData = countries.peekContent()[selectedIndex]
-                    val selectedCountryHistoricalData =
-                        countriesHistoricalData.value!!.peekContent().last {
-                            it.country == selectedCountryData.country && it.province == null
+                    val selectedCountryHistoricalDataList =
+                        countriesHistoricalData.value!!.peekContent().filter {
+                            it.country == selectedCountryData.country
                         }
 
+
+                    val casesMap : MutableMap<String, Int> = mutableMapOf()
+                    val deathsMap : MutableMap<String, Int> = mutableMapOf()
+                    val recoveredMap : MutableMap<String, Int> = mutableMapOf()
+
+
+                    selectedCountryHistoricalDataList.forEach {
+                    casesMap.putAll(it.timeline.cases)
+//                        casesMap.mergeReduce(it.timeline.cases)
+//                        deathsMap.mergeReduce(it.timeline.deaths)
+//                        recoveredMap.mergeReduce(it.timeline.recovered)
+                    }
+
+                    val selectedCountryHistoricalData:  TimelineData =
+                        TimelineData(
+                            casesMap,
+                            deathsMap,
+                            recoveredMap
+                        )
 
                     selectedCountry.value =
                         Event(
                             Pair(
                                 selectedCountryData,
-                                selectedCountryHistoricalData.timeline.toFormattedData()
+                                selectedCountryHistoricalData.toFormattedData()
                             )
                         )
                 } ?: run {
@@ -132,100 +156,4 @@ class HomeViewModel(
 
     override val inputs = this
     override val outputs = this
-}
-
-private fun TimelineData.toFormattedData(): FormattedHistoricalData {
-    val casesKeys = this.cases.keys
-    val deathsKeys = this.deaths.keys
-    val recoveredKeys = this.recovered.keys
-
-    var toReturn: FormattedHistoricalData? = null
-    val casesMap: MutableMap<Int, Int> = mutableMapOf()
-    val deathsMap: MutableMap<Int, Int> = mutableMapOf()
-    val recoveredMap: MutableMap<Int, Int> = mutableMapOf()
-
-    if (casesKeys.isNotEmpty()) {
-        val (m, d, y) = casesKeys.first().split("/")
-        val calendar = Calendar.getInstance()
-        calendar.set((y + y).toInt(), m.toInt() - 1, d.toInt(), 0, 0)
-        val week1 = calendar.get(Calendar.WEEK_OF_YEAR)
-        val dow = calendar.get(Calendar.DAY_OF_WEEK)
-
-        var weekCount = week1
-
-        val casesMapToList = this.cases.toList()
-
-        var x = dow
-        while (x <= recoveredKeys.size) {
-            println(x)
-            if (x == dow) {
-                casesMap[week1] = casesMapToList[x].second
-                x += 7 - dow
-            } else {
-                casesMap[weekCount] = casesMapToList[x].second
-                x += 7
-            }
-            weekCount += 1
-        }
-
-    }
-
-    if (deathsKeys.isNotEmpty()) {
-        val (m, d, y) = casesKeys.first().split("/")
-        val calendar = Calendar.getInstance()
-        calendar.set((y + y).toInt(), m.toInt() - 1, d.toInt(), 0, 0)
-        val week1 = calendar.get(Calendar.WEEK_OF_YEAR)
-        val dow = calendar.get(Calendar.DAY_OF_WEEK)
-
-        var weekCount = week1
-
-        val deathsMapToList = this.deaths.toList()
-
-        var x = dow
-        while (x <= recoveredKeys.size) {
-            println(x)
-            if (x == dow) {
-                deathsMap[week1] = deathsMapToList[x].second
-                x += 7 - dow
-            } else {
-                deathsMap[weekCount] = deathsMapToList[x].second
-                x += 7
-            }
-            weekCount += 1
-        }
-
-    }
-
-    if (recoveredKeys.isNotEmpty()) {
-        val (m, d, y) = casesKeys.first().split("/")
-        val calendar = Calendar.getInstance()
-        calendar.set((y + y).toInt(), m.toInt() - 1, d.toInt(), 0, 0)
-        val week1 = calendar.get(Calendar.WEEK_OF_YEAR)
-        val dow = calendar.get(Calendar.DAY_OF_WEEK)
-
-        var weekCount = week1
-
-        val recoveredMapToList = this.recovered.toList()
-
-        var x = dow
-        while (x <= recoveredKeys.size) {
-            println(x)
-            if (x == dow) {
-                recoveredMap[week1] = recoveredMapToList[x].second
-                x += 7 - dow
-            } else {
-                recoveredMap[weekCount] = recoveredMapToList[x].second
-                x += 7
-            }
-            weekCount += 1
-        }
-    }
-
-    toReturn = FormattedHistoricalData(
-        casesMap,
-        deathsMap,
-        recoveredMap
-    )
-
-    return toReturn
 }

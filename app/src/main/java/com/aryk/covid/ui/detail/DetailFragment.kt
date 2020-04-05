@@ -11,9 +11,6 @@ import com.aryk.covid.R
 import com.aryk.covid.helper.TimeHelper
 import com.aryk.covid.models.FormattedHistoricalData
 import com.aryk.network.models.data.CountryData
-import com.aryk.network.models.data.CountryHistoricalData
-import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -135,9 +132,9 @@ class DetailFragment : Fragment() {
                             val d = map.deaths.keys
                             val r = map.recovered.keys
 
-                            var casesSet:MutableList<Entry> = mutableListOf()
-                            var deathsSet:MutableList<Entry> = mutableListOf()
-                            var recoveredSet:MutableList<Entry> = mutableListOf()
+                            var casesSet: MutableList<Entry> = mutableListOf()
+                            var deathsSet: MutableList<Entry> = mutableListOf()
+                            var recoveredSet: MutableList<Entry> = mutableListOf()
                             c.forEach {
                                 casesSet.add(Entry(it.toFloat(), map.cases[it]!!.toFloat()))
                             }
@@ -150,9 +147,9 @@ class DetailFragment : Fragment() {
 
 
                             lineChart.data = LineData(
-                                LineDataSet(casesSet,"cases"),
-                                LineDataSet(deathsSet,"deaths"),
-                                LineDataSet(recoveredSet,"recovered")
+                                LineDataSet(casesSet, "cases"),
+                                LineDataSet(deathsSet, "deaths"),
+                                LineDataSet(recoveredSet, "recovered")
                             )
                         }
                     } else {
