@@ -2,29 +2,38 @@ package com.aryk.covid.repositories
 
 import com.aryk.covid.enums.CountriesSortType
 import com.aryk.network.NingaApiService
+import com.aryk.network.VirusTrackerApiService
 import com.aryk.network.models.ningaApi.CountryData
 import com.aryk.network.models.ningaApi.CountryHistoricalData
+import com.aryk.network.models.virusTrackerApi.CountryTimelineResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class DataRepository(
-    val ningaApiService: NingaApiService
+    val ningaService: NingaApiService,
+    val virusTrackerService: VirusTrackerApiService
 ) : DataRepositoryInterface {
     override suspend fun getAllCountriesData(sort: String?): List<CountryData> {
         return withContext(Dispatchers.IO) {
-            ningaApiService.getAllCountriesData(sort ?: CountriesSortType.Cases.name)
+            ningaService.getAllCountriesData(sort ?: CountriesSortType.Cases.name)
         }
     }
 
     override suspend fun getCountryData(country: String): CountryData {
         return withContext(Dispatchers.IO) {
-            ningaApiService.getCountryData(country)
+            ningaService.getCountryData(country)
         }
     }
 
     override suspend fun getHistoricalData(): List<CountryHistoricalData> {
         return withContext(Dispatchers.IO) {
-            ningaApiService.getHistoricalData()
+            ningaService.getHistoricalData()
+        }
+    }
+
+    override suspend fun getHistoricalData2(countryISO2: String): CountryTimelineResponse {
+        return withContext(Dispatchers.IO) {
+            virusTrackerService.getCountryTimeline(countryISO2)
         }
     }
 }

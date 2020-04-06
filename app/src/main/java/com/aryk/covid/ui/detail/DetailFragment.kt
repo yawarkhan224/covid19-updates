@@ -20,7 +20,7 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Locale
 
-@SuppressWarnings("ForbiddenComment", "LongMethod", "ComplexMethod")
+@SuppressWarnings("ForbiddenComment", "LongMethod", "ComplexMethod", "MagicNumber")
 @ExperimentalCoroutinesApi
 class DetailFragment : Fragment() {
     companion object {
@@ -53,6 +53,14 @@ class DetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Set the map view height to be 75 percent of the entire detail view
+        lineChart.apply {
+            val params = this.layoutParams
+            params.height = (resources.displayMetrics.heightPixels * 0.50f).toInt()
+
+            this.layoutParams = params
+        }
 
         arguments?.getParcelable<CountryData>(ARG_SELECTED_COUNTRY)?.let {
             it.countryInfo?.flag?.let { url ->
@@ -120,13 +128,48 @@ class DetailFragment : Fragment() {
         })
 
         showGraphicalData.setOnClickListener {
-            detailViewModel.inputs.onShowHistoricalDataClicked()
+            // detailViewModel.inputs.onShowHistoricalDataClicked()
+            detailViewModel.inputs.onLoadHistoricalData()
         }
 
         detailViewModel.outputs.showHistoricalData.observe(viewLifecycleOwner, Observer { event ->
-            event.getContentIfNotHandled()?.let {
+//            event.getContentIfNotHandled()?.let {
+//                showGraphicalData.visibility = View.GONE
+//                historicalDataLayout.visibility = View.VISIBLE
+//            }
+        })
+
+        detailViewModel.outputs.historicalData.observe(viewLifecycleOwner, Observer { event ->
+            event.getContentIfNotHandled()?.let { timelineData ->
                 showGraphicalData.visibility = View.GONE
                 historicalDataLayout.visibility = View.VISIBLE
+
+                timelineData.let { map ->
+                    val c = map.cases.keys
+                    val d = map.deaths.keys
+                    val r = map.recovered.keys
+
+                    val casesSet: MutableList<Entry> = mutableListOf()
+                    val deathsSet: MutableList<Entry> = mutableListOf()
+                    val recoveredSet: MutableList<Entry> = mutableListOf()
+                    c.forEach {
+                        casesSet.add(Entry(it, map.cases[it]!!))
+                    }
+                    d.forEach {
+                        deathsSet.add(Entry(it, map.deaths[it]!!))
+                    }
+                    r.forEach {
+                        recoveredSet.add(Entry(it, map.recovered[it]!!))
+                    }
+
+                    lineChart.setDrawBorders(false)
+                    lineChart.setDrawGridBackground(false)
+                    lineChart.data = LineData(
+                        LineDataSet(casesSet, "cases"),
+                        LineDataSet(deathsSet, "deaths"),
+                        LineDataSet(recoveredSet, "recovered")
+                    )
+                }
             }
         })
 

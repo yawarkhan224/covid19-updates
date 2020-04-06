@@ -40,7 +40,7 @@ val netModule = module {
 
     fun provideRetrofitVirusTrackerInstance(factory: Gson, client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://thevirustracker.com/free-api")
+            .baseUrl("https://thevirustracker.com/")
             .addConverterFactory(GsonConverterFactory.create(factory))
             .client(client)
             .build()

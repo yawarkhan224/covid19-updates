@@ -3,10 +3,13 @@ package com.aryk.covid.ui.detail
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.aryk.covid.extensions.toFormattedTimelineData
 import com.aryk.covid.helper.Event
 import com.aryk.covid.models.FormattedHistoricalData
+import com.aryk.covid.models.FormattedTimelineData
 import com.aryk.covid.repositories.DataRepository
 import com.aryk.network.models.ningaApi.CountryData
+import com.aryk.network.models.virusTrackerApi.CountryTimelineResponse
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
@@ -16,6 +19,7 @@ interface DetailViewModelInputs {
     fun onLoadData()
     fun onDataAvailable(data: CountryData, historicalData: FormattedHistoricalData?)
     fun onShowHistoricalDataClicked()
+    fun onLoadHistoricalData()
 }
 
 @ExperimentalCoroutinesApi
@@ -23,6 +27,7 @@ interface DetailViewModelOutputs {
     val countryData: MutableLiveData<Event<CountryData>>
     val historicalCountryData: MutableLiveData<Event<Pair<FormattedHistoricalData?, Boolean>>>
     val showHistoricalData: MutableLiveData<Event<Unit>>
+    val historicalData: MutableLiveData<Event<FormattedTimelineData>>
     val isLoading: MutableLiveData<Event<Boolean>>
 }
 
@@ -41,6 +46,7 @@ class DetailViewModel(
     override val historicalCountryData:
             MutableLiveData<Event<Pair<FormattedHistoricalData?, Boolean>>> = MutableLiveData()
     override val showHistoricalData: MutableLiveData<Event<Unit>> = MutableLiveData()
+    override val historicalData: MutableLiveData<Event<FormattedTimelineData>> = MutableLiveData()
     override val isLoading: MutableLiveData<Event<Boolean>> = MutableLiveData()
 
     private val onLoadDataProperty: Channel<Unit> = Channel(1)
@@ -64,6 +70,13 @@ class DetailViewModel(
     override fun onShowHistoricalDataClicked() {
         viewModelScope.launch {
             onShowHistoricalDataClickedProperty.send(Unit)
+        }
+    }
+
+    private val onLoadHistoricalDataProperty: Channel<Unit> = Channel(1)
+    override fun onLoadHistoricalData() {
+        viewModelScope.launch {
+            onLoadHistoricalDataProperty.send(Unit)
         }
     }
 
@@ -111,6 +124,23 @@ class DetailViewModel(
                 showHistoricalData.value = Event(Unit)
                 historicalCountryData.value =
                     Event(Pair(historicalCountryData.value?.peekContent()?.first, true))
+            }
+        }
+
+        viewModelScope.launch {
+            onLoadHistoricalDataProperty.consumeEach {
+                countryData.value!!.peekContent().countryInfo?.iso2?.let { countryISO2 ->
+                    val data: CountryTimelineResponse? =
+                        dataRepository.getHistoricalData2(countryISO2)
+
+                    data?.let { nonNullData ->
+                        historicalData.value = Event(nonNullData.toFormattedTimelineData())
+                    } ?: kotlin.run {
+                        // TODO: Handle error for data loading failure
+                    }
+                } ?: run {
+                    // TODO: Handle error for data loading failure
+                }
             }
         }
     }
