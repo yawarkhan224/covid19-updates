@@ -20,7 +20,7 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Locale
 
-@SuppressWarnings("ForbiddenComment","LongMethod")
+@SuppressWarnings("ForbiddenComment", "LongMethod")
 @ExperimentalCoroutinesApi
 class DetailFragment : Fragment() {
     companion object {
@@ -115,8 +115,7 @@ class DetailFragment : Fragment() {
         }
 
         detailViewModel.outputs.showHistoricalData.observe(viewLifecycleOwner, Observer { event ->
-            event.getContentIfNotHandled()?.let { countryData ->
-
+            event.getContentIfNotHandled()?.let {
                 showGraphicalData.visibility = View.GONE
                 historicalDataLayout.visibility = View.VISIBLE
             }

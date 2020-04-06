@@ -1,6 +1,6 @@
 package com.aryk.covid.repositories
 
-import com.aryk.covid.enums.CountriesSortTypeEnum
+import com.aryk.covid.enums.CountriesSortType
 import com.aryk.network.Covid19Service
 import com.aryk.network.models.data.CountryData
 import com.aryk.network.models.data.CountryHistoricalData
@@ -12,7 +12,7 @@ class DataRepository(
 ) : DataRepositoryInterface {
     override suspend fun getAllCountriesData(sort: String?): List<CountryData> {
         return withContext(Dispatchers.IO) {
-            covid19Service.getAllCountriesData(sort ?: CountriesSortTypeEnum.Cases.name)
+            covid19Service.getAllCountriesData(sort ?: CountriesSortType.Cases.name)
         }
     }
 

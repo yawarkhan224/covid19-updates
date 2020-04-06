@@ -10,7 +10,7 @@ fun TimelineData.toFormattedData(): FormattedHistoricalData {
     val deathsKeys = this.deaths.keys
     val recoveredKeys = this.recovered.keys
 
-    var toReturn: FormattedHistoricalData? = null
+    var toReturn: FormattedHistoricalData?
     val casesMap: MutableMap<Int, Int> = mutableMapOf()
     val deathsMap: MutableMap<Int, Int> = mutableMapOf()
     val recoveredMap: MutableMap<Int, Int> = mutableMapOf()
