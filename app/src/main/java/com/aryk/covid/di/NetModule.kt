@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidApplication
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -29,9 +30,17 @@ val netModule = module {
         return GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.IDENTITY).create()
     }
 
-    fun provideRetrofit(factory: Gson, client: OkHttpClient): Retrofit {
+    fun provideRetrofitNingaInstance(factory: Gson, client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://corona.lmao.ninja/")
+            .addConverterFactory(GsonConverterFactory.create(factory))
+            .client(client)
+            .build()
+    }
+
+    fun provideRetrofitVirusTrackerInstance(factory: Gson, client: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://thevirustracker.com/free-api")
             .addConverterFactory(GsonConverterFactory.create(factory))
             .client(client)
             .build()
@@ -40,5 +49,6 @@ val netModule = module {
     single { provideCache(androidApplication()) }
     single { provideHttpClient(get()) }
     single { provideGson() }
-    single { provideRetrofit(get(), get()) }
+    single(named("ningaInstance")) { provideRetrofitNingaInstance(get(), get()) }
+    single(named("virusTrackerInstance")) { provideRetrofitVirusTrackerInstance(get(), get()) }
 }
