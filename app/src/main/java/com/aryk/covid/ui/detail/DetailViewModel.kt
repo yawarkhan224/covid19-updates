@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.aryk.covid.helper.Event
 import com.aryk.covid.models.FormattedHistoricalData
 import com.aryk.covid.repositories.DataRepository
-import com.aryk.network.models.data.CountryData
+import com.aryk.network.models.ningaApi.CountryData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
@@ -89,16 +89,18 @@ class DetailViewModel(
 
         viewModelScope.launch {
             onLoadDataProperty.consumeEach {
-                val data: CountryData? =
-                    dataRepository.getCountryData(
-                        countryData.value!!.peekContent().country
-                    )
+                countryData.value!!.peekContent().country?.let { countryName ->
+                    val data: CountryData? =
+                        dataRepository.getCountryData(countryName)
 
-                data?.let { nonNullData ->
-                    isLoading.value = Event(false)
-                    countryData.value = Event(nonNullData)
-                } ?: kotlin.run {
-                    isLoading.value = Event(false)
+                    data?.let { nonNullData ->
+                        isLoading.value = Event(false)
+                        countryData.value = Event(nonNullData)
+                    } ?: kotlin.run {
+                        isLoading.value = Event(false)
+                        // TODO: Handle error for data loading failure
+                    }
+                } ?: run {
                     // TODO: Handle error for data loading failure
                 }
             }

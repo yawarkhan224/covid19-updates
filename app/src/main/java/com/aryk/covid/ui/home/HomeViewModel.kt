@@ -3,23 +3,22 @@ package com.aryk.covid.ui.home
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aryk.covid.extensions.toFormattedData
+import com.aryk.covid.enums.CountriesSortType
 import com.aryk.covid.helper.Event
 import com.aryk.covid.models.FormattedHistoricalData
 import com.aryk.covid.repositories.DataRepository
-import com.aryk.network.models.data.CountryData
-import com.aryk.network.models.data.CountryHistoricalData
-import com.aryk.network.models.data.TimelineData
+import com.aryk.network.models.ningaApi.CountryData
+import com.aryk.network.models.ningaApi.CountryHistoricalData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
-import java.util.Calendar
 
 interface HomeViewModelInputs {
     fun onLoadData()
     fun onLoadHistoricalData()
     fun onCountrySelected(id: Int)
+    fun onSortData(sortBy: String)
 }
 
 @ExperimentalCoroutinesApi
@@ -72,12 +71,21 @@ class HomeViewModel(
         }
     }
 
+    private val onSortDataProperty: Channel<String> = Channel(1)
+    override fun onSortData(sortBy: String) {
+        isLoading.value = Event(true)
+        viewModelScope.launch {
+            onSortDataProperty.send(sortBy)
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
 
         onLoadDataProperty.cancel()
         onCountrySelectedProperty.cancel()
         onLoadHistoricalDataProperty.cancel()
+        onSortDataProperty.cancel()
     }
 
     init {
@@ -86,7 +94,8 @@ class HomeViewModel(
                 val data: List<CountryData>? = dataRepository.getAllCountriesData(null)
                 data?.let { nonNullList ->
                     isLoading.value = Event(false)
-                    countriesData.value = Event(nonNullList)
+                    countriesData.value =
+                        Event(nonNullList.sortedWith(compareBy { -(it.cases ?: 0) }))
                 } ?: kotlin.run {
                     isLoading.value = Event(false)
                     // TODO: Handle error for data loading failure
@@ -111,20 +120,47 @@ class HomeViewModel(
             onCountrySelectedProperty.consumeEach { selectedIndex ->
                 countriesData.value?.let { countries ->
                     val selectedCountryData = countries.peekContent()[selectedIndex]
-                    val selectedCountryHistoricalData =
-                        countriesHistoricalData.value!!.peekContent().last {
-                            it.country == selectedCountryData.country && it.province == null
-                        }
+//                    val selectedCountryHistoricalData =
+//                        countriesHistoricalData.value!!.peekContent().last {
+//                            it.country == selectedCountryData.country && it.province == null
+//                        }
 
                     selectedCountry.value =
                         Event(
                             Pair(
                                 selectedCountryData,
-                                selectedCountryHistoricalData.timeline.toFormattedData()
+                                null
                             )
                         )
                 } ?: run {
                     // TODO: Handle Error for empty country list
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            onSortDataProperty.consumeEach { sortBy ->
+                countriesData.value?.peekContent()?.let { countries ->
+                    when (sortBy) {
+                        CountriesSortType.Country.key -> {
+                            countriesData.value =
+                                Event(countries.sortedWith(compareBy { it.country }))
+                        }
+                        CountriesSortType.Cases.key -> {
+                            countriesData.value =
+                                Event(countries.sortedWith(compareBy { it.cases }))
+                        }
+                        CountriesSortType.Deaths.key -> {
+                            countriesData.value =
+                                Event(countries.sortedWith(compareBy { it.deaths }))
+                        }
+                        CountriesSortType.Recovered.key -> {
+                            countriesData.value =
+                                Event(countries.sortedWith(compareBy { it.recovered }))
+                        }
+                    }
+
+                    isLoading.value = Event(false)
                 }
             }
         }

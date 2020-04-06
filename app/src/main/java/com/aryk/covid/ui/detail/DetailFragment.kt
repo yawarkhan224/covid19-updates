@@ -10,7 +10,7 @@ import coil.api.load
 import com.aryk.covid.R
 import com.aryk.covid.helper.TimeHelper
 import com.aryk.covid.models.FormattedHistoricalData
-import com.aryk.network.models.data.CountryData
+import com.aryk.network.models.ningaApi.CountryData
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -20,7 +20,7 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Locale
 
-@SuppressWarnings("ForbiddenComment", "LongMethod")
+@SuppressWarnings("ForbiddenComment", "LongMethod", "ComplexMethod")
 @ExperimentalCoroutinesApi
 class DetailFragment : Fragment() {
     companion object {
@@ -55,7 +55,12 @@ class DetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         arguments?.getParcelable<CountryData>(ARG_SELECTED_COUNTRY)?.let {
-            flag.load(it.countryInfo.flag)
+            it.countryInfo?.flag?.let { url ->
+                flag.load(url)
+            } ?: run {
+                // TODO: Handle error for data loading failure
+            }
+
             detailViewModel.inputs.onDataAvailable(
                 it,
                 arguments?.getParcelable<FormattedHistoricalData>(ARG_HISTORICAL_DATA)
@@ -100,13 +105,17 @@ class DetailFragment : Fragment() {
                 casesPerMillionValue.text = countryData.casesPerOneMillion.toString()
                 deathsPerMillionValue.text = countryData.deathsPerOneMillion.toString()
 
-                updatedAt.text = getString(
-                    R.string.last_updated,
-                    timeHelper.unixTimeStampInSecondsToLongDateTime(
-                        countryData.updated.toLong(),
-                        Locale.getDefault()
+                countryData.updated?.let { updatedAtString ->
+                    updatedAt.text = getString(
+                        R.string.last_updated,
+                        timeHelper.unixTimeStampInSecondsToLongDateTime(
+                            updatedAtString.toLong(),
+                            Locale.getDefault()
+                        )
                     )
-                )
+                } ?: run {
+                    updatedAt.text = "-"
+                }
             }
         })
 

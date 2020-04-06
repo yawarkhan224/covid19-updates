@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.api.load
 import com.aryk.covid.R
 import com.aryk.covid.extensions.toShorterFormatString
-import com.aryk.network.models.data.CountryData
+import com.aryk.network.models.ningaApi.CountryData
 import kotlinx.android.synthetic.main.countries_list_item.view.*
 
 class CountryListAdapter :
@@ -25,11 +25,13 @@ class CountryListAdapter :
     override fun onBindViewHolder(holder: CountryDataViewHolder, position: Int) {
         val country = getItem(position)
 
-        holder.countryFlag.load(country.countryInfo.flag)
-        holder.countryName.text = country.countryInfo.iso3
-        holder.totalCasesValue.text = country.cases.toShorterFormatString()
-        holder.totalDeathsValue.text = country.deaths.toShorterFormatString()
-        holder.recoveredValue.text = country.recovered.toShorterFormatString()
+        country.countryInfo?.let { countryInfo ->
+            holder.countryFlag.load(countryInfo.flag)
+            holder.countryName.text = countryInfo.iso3 ?: "-"
+            holder.totalCasesValue.text = country.cases?.toShorterFormatString() ?: "-"
+            holder.totalDeathsValue.text = country.deaths?.toShorterFormatString() ?: "-"
+            holder.recoveredValue.text = country.recovered?.toShorterFormatString() ?: "-"
+        }
     }
 
     class CountryDataViewHolder(view: View) : RecyclerView.ViewHolder(view) {
