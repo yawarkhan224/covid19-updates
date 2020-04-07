@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.fragment_detail.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.*
+import java.util.Locale
 
 @SuppressWarnings("ForbiddenComment", "LongMethod", "ComplexMethod", "MagicNumber")
 @ExperimentalCoroutinesApi

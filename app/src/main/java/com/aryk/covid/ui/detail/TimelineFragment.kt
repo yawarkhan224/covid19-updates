@@ -16,10 +16,10 @@ import kotlinx.android.synthetic.main.fragment_timeline.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-
 /**
  * A simple [Fragment] subclass.
  */
+@SuppressWarnings("ForbiddenComment")
 @ExperimentalCoroutinesApi
 class TimelineFragment : Fragment() {
     companion object {
@@ -41,7 +41,8 @@ class TimelineFragment : Fragment() {
     private val timelineViewModel: TimelineViewModel by viewModel()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment

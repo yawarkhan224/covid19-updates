@@ -7,10 +7,12 @@ import com.aryk.covid.extensions.toFormattedTimelineData
 import com.aryk.covid.helper.Event
 import com.aryk.covid.models.FormattedTimelineData
 import com.aryk.covid.repositories.DataRepository
-import com.aryk.network.models.virusTrackerApi.CountryTimelineResponse
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 interface TimelineViewModelInputs {
@@ -54,14 +56,15 @@ class TimelineViewModel(
     init {
         viewModelScope.launch {
             onLoadHistoricalDataProperty.consumeEach { countryISO2 ->
-                val data: CountryTimelineResponse? =
-                    dataRepository.getHistoricalData2(countryISO2)
-
-                data?.let { nonNullData ->
-                    historicalData.value = Event(nonNullData.toFormattedTimelineData())
-                } ?: kotlin.run {
-                    // TODO: Handle error for data loading failure
-                }
+                dataRepository.getHistoricalData2(countryISO2)
+                    .onStart { isLoading.value = Event(true) }
+                    .catch { exception -> /* _foo.value = error state */
+                        isLoading.value = Event(false)
+                    }
+                    .collect { nonNullData ->
+                        isLoading.value = Event(false)
+                        historicalData.value = Event(nonNullData.toFormattedTimelineData())
+                    }
             }
         }
     }

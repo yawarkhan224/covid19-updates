@@ -8,23 +8,34 @@ import com.aryk.network.models.ningaApi.CountryHistoricalData
 import com.aryk.network.models.virusTrackerApi.CountryTimelineResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 
 @ExperimentalCoroutinesApi
 class DataRepository(
-    val ningaService: NingaApiService,
-    val virusTrackerService: VirusTrackerApiService
+    private val ningaService: NingaApiService,
+    private val virusTrackerService: VirusTrackerApiService
 ) : DataRepositoryInterface {
-    override suspend fun getAllCountriesData(sort: String?): List<CountryData> {
-        return withContext(Dispatchers.IO) {
-            ningaService.getAllCountriesData(sort ?: CountriesSortType.Cases.name)
-        }
+    override suspend fun getAllCountriesData(sort: String?): Flow<List<CountryData>> {
+        return flow {
+            // execute API call
+            val data = ningaService.getAllCountriesData(sort ?: CountriesSortType.Cases.name)
+
+            // Emit the list to the stream
+            emit(data)
+        }.flowOn(Dispatchers.IO) // Use the IO thread for this Flow
     }
 
-    override suspend fun getCountryData(country: String): CountryData {
-        return withContext(Dispatchers.IO) {
-            ningaService.getCountryData(country)
-        }
+    override suspend fun getCountryData(country: String): Flow<CountryData> {
+        return flow {
+            // execute API call
+            val data = ningaService.getCountryData(country)
+
+            // Emit the list to the stream
+            emit(data)
+        }.flowOn(Dispatchers.IO) // Use the IO thread for this Flow
     }
 
     override suspend fun getHistoricalData(): List<CountryHistoricalData> {
@@ -33,9 +44,13 @@ class DataRepository(
         }
     }
 
-    override suspend fun getHistoricalData2(countryISO2: String): CountryTimelineResponse {
+    override suspend fun getHistoricalData2(countryISO2: String): Flow<CountryTimelineResponse> {
+        return flow {
+            // execute API call
+            val data = virusTrackerService.getCountryTimeline(countryISO2)
 
-        // exectute API call and map to UI object
-        return virusTrackerService.getCountryTimeline(countryISO2)
+            // Emit the list to the stream
+            emit(data)
+        }.flowOn(Dispatchers.IO) // Use the IO thread for this Flow
     }
 }

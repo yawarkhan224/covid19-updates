@@ -12,8 +12,8 @@ import com.aryk.network.models.ningaApi.CountryData
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_detail_and_timeline.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@SuppressWarnings("ForbiddenComment")
 @ExperimentalCoroutinesApi
 class DetailAndTimelineFragment : Fragment() {
     companion object {
@@ -77,4 +77,3 @@ class DetailAndTimelineFragment : Fragment() {
         activity?.title = getString(R.string.app_name)
     }
 }
-

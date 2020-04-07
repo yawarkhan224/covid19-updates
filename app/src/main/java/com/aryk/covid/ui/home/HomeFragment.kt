@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.aryk.covid.R
 import com.aryk.covid.helper.ItemClickSupport
 import com.aryk.covid.ui.detail.DetailAndTimelineFragment
-import com.aryk.covid.ui.detail.DetailFragment
 import com.aryk.covid.ui.home.adapter.CountryListAdapter
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi

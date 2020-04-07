@@ -3,16 +3,17 @@ package com.aryk.covid.ui.detail
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aryk.covid.extensions.toFormattedTimelineData
 import com.aryk.covid.helper.Event
 import com.aryk.covid.models.FormattedHistoricalData
 import com.aryk.covid.models.FormattedTimelineData
 import com.aryk.covid.repositories.DataRepository
 import com.aryk.network.models.ningaApi.CountryData
-import com.aryk.network.models.virusTrackerApi.CountryTimelineResponse
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 interface DetailViewModelInputs {
@@ -103,16 +104,15 @@ class DetailViewModel(
         viewModelScope.launch {
             onLoadDataProperty.consumeEach {
                 countryData.value!!.peekContent().country?.let { countryName ->
-                    val data: CountryData? =
-                        dataRepository.getCountryData(countryName)
-
-                    data?.let { nonNullData ->
-                        isLoading.value = Event(false)
-                        countryData.value = Event(nonNullData)
-                    } ?: kotlin.run {
-                        isLoading.value = Event(false)
-                        // TODO: Handle error for data loading failure
-                    }
+                    dataRepository.getCountryData(countryName)
+                        .onStart { isLoading.value = Event(true) }
+                        .catch { exception -> /* _foo.value = error state */
+                            isLoading.value = Event(false)
+                        }
+                        .collect { nonNullData ->
+                            isLoading.value = Event(false)
+                            countryData.value = Event(nonNullData)
+                        }
                 } ?: run {
                     // TODO: Handle error for data loading failure
                 }

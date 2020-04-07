@@ -12,6 +12,9 @@ import com.aryk.network.models.ningaApi.CountryHistoricalData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 interface HomeViewModelInputs {
@@ -91,15 +94,16 @@ class HomeViewModel(
     init {
         viewModelScope.launch {
             onLoadDataProperty.consumeEach {
-                val data: List<CountryData>? = dataRepository.getAllCountriesData(null)
-                data?.let { nonNullList ->
-                    isLoading.value = Event(false)
-                    countriesData.value =
-                        Event(nonNullList.sortedWith(compareBy { -(it.cases ?: 0) }))
-                } ?: kotlin.run {
-                    isLoading.value = Event(false)
-                    // TODO: Handle error for data loading failure
-                }
+                dataRepository.getAllCountriesData(null)
+                    .onStart { isLoading.value = Event(true) }
+                    .catch { exception -> /* _foo.value = error state */
+                        isLoading.value = Event(false)
+                    }
+                    .collect { nonNullList ->
+                        isLoading.value = Event(false)
+                        countriesData.value =
+                            Event(nonNullList.sortedWith(compareBy { -(it.cases ?: 0) }))
+                    }
             }
         }
 
