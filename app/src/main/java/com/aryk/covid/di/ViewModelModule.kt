@@ -2,7 +2,7 @@ package com.aryk.covid.di
 
 import com.aryk.covid.ui.detail.DetailViewModel
 import com.aryk.covid.ui.home.HomeViewModel
-import com.aryk.covid.ui.notifications.NotificationsViewModel
+import com.aryk.covid.ui.detail.TimelineViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -16,6 +16,6 @@ val viewModelModule = module {
         DetailViewModel(get())
     }
     viewModel {
-        NotificationsViewModel()
+        TimelineViewModel(get())
     }
 }

@@ -7,8 +7,10 @@ import com.aryk.network.models.ningaApi.CountryData
 import com.aryk.network.models.ningaApi.CountryHistoricalData
 import com.aryk.network.models.virusTrackerApi.CountryTimelineResponse
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.withContext
 
+@ExperimentalCoroutinesApi
 class DataRepository(
     val ningaService: NingaApiService,
     val virusTrackerService: VirusTrackerApiService
@@ -32,8 +34,8 @@ class DataRepository(
     }
 
     override suspend fun getHistoricalData2(countryISO2: String): CountryTimelineResponse {
-        return withContext(Dispatchers.IO) {
-            virusTrackerService.getCountryTimeline(countryISO2)
-        }
+
+        // exectute API call and map to UI object
+        return virusTrackerService.getCountryTimeline(countryISO2)
     }
 }

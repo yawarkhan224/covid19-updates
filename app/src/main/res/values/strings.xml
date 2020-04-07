@@ -4,6 +4,9 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
 
+    <string name="stats">Statistic</string>
+    <string name="timeline">Timeline</string>
+
     <!-- For Splash Screen-->
     <string name="stayHome">#stayHome</string>
     <string name="stayHealthy">#stayHealthy</string>
@@ -23,4 +26,7 @@
 
     <!-- For Detail View-->
     <string name="show_graphical_data">Show Graphical Data</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

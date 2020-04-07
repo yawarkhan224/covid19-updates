@@ -126,23 +126,6 @@ class DetailViewModel(
                     Event(Pair(historicalCountryData.value?.peekContent()?.first, true))
             }
         }
-
-        viewModelScope.launch {
-            onLoadHistoricalDataProperty.consumeEach {
-                countryData.value!!.peekContent().countryInfo?.iso2?.let { countryISO2 ->
-                    val data: CountryTimelineResponse? =
-                        dataRepository.getHistoricalData2(countryISO2)
-
-                    data?.let { nonNullData ->
-                        historicalData.value = Event(nonNullData.toFormattedTimelineData())
-                    } ?: kotlin.run {
-                        // TODO: Handle error for data loading failure
-                    }
-                } ?: run {
-                    // TODO: Handle error for data loading failure
-                }
-            }
-        }
     }
 
     override val inputs = this
