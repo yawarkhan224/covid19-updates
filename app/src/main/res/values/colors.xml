@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#CA382D</color>
-    <color name="colorPrimaryDark">#A52F31</color>
+    <color name="colorPrimary">#c9382d</color>
+    <color name="colorPrimaryDark">#a63031</color>
     <color name="colorAccent">#2F2D30</color>
 
     <color name="silver">#B9B9B9</color>
@@ -9,5 +9,9 @@
     <color name="frenchGrey">#c8c7cc</color>
 
     <color name="gallery">#EBEBEB</color>
-    <color name="gray">#8E8E8E</color>
+    <color name="gray">#828282</color>
+
+    <color name="doveGray">#6f6f6f</color>
+
+    <color name="white_60">#99ffffff</color>
 </resources>

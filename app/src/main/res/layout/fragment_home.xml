@@ -38,12 +38,14 @@
 
         <TextView
             android:id="@+id/country"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="4dp"
+            android:drawableStart="@drawable/ic_country"
+            android:drawablePadding="2dp"
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@string/country"
@@ -57,12 +59,14 @@
 
         <TextView
             android:id="@+id/cases"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="4dp"
+            android:drawableStart="@drawable/ic_covid"
+            android:drawablePadding="2dp"
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@string/cases"
@@ -76,12 +80,14 @@
 
         <TextView
             android:id="@+id/deaths"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="4dp"
+            android:drawableStart="@drawable/ic_death"
+            android:drawablePadding="2dp"
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@string/deaths"
@@ -95,14 +101,14 @@
 
         <TextView
             android:id="@+id/recovered"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="4dp"
-            android:clickable="true"
-            android:focusable="true"
+            android:drawableStart="@drawable/ic_recoved"
+            android:drawablePadding="2dp"
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@string/recovered"
@@ -139,12 +145,12 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:visibility="gone"
         android:text="@string/dataMissing"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/countriesSwipeRefresh"
