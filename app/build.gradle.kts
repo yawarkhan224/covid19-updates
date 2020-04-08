@@ -69,6 +69,8 @@ dependencies {
     implementation(project(":network"))
 
     ktlint(CodeQualityLibraries.ktlint)
+
+    debugImplementation(CodeQualityLibraries.leakCanary)
 }
 
 tasks.register < JavaExec > ("ktlint") {
