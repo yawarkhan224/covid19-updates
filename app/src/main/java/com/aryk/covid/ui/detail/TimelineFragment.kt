@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.aryk.covid.R
+import com.aryk.covid.helper.DeviceHelper
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.XAxis.XAxisPosition
 import com.github.mikephil.charting.data.Entry
@@ -14,12 +15,13 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.android.synthetic.main.fragment_timeline.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * A simple [Fragment] subclass.
  */
-@SuppressWarnings("ForbiddenComment")
+@SuppressWarnings("ForbiddenComment", "MagicNumber")
 @ExperimentalCoroutinesApi
 class TimelineFragment : Fragment() {
     companion object {
@@ -39,6 +41,7 @@ class TimelineFragment : Fragment() {
     }
 
     private val timelineViewModel: TimelineViewModel by viewModel()
+    private val deviceHelper: DeviceHelper by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -78,15 +81,16 @@ class TimelineFragment : Fragment() {
                         recoveredSet.add(Entry(it, map.recovered[it]!!))
                     }
 
-                    val xAxis: XAxis = timelineChart.xAxis
-                    xAxis.position = XAxisPosition.BOTTOM_INSIDE
+                    val (casesDataSet, deathsDataSet, recoveredDataSet) = polishChartUi(
+                        casesSet,
+                        deathsSet,
+                        recoveredSet
+                    )
 
-                    timelineChart.setDrawBorders(false)
-                    timelineChart.setDrawGridBackground(false)
                     timelineChart.data = LineData(
-                        LineDataSet(casesSet, "cases"),
-                        LineDataSet(deathsSet, "deaths"),
-                        LineDataSet(recoveredSet, "recovered")
+                        casesDataSet,
+                        deathsDataSet,
+                        recoveredDataSet
                     )
 
                     timelineChart.visibility = View.VISIBLE
@@ -113,5 +117,69 @@ class TimelineFragment : Fragment() {
                 }
             }
         })
+    }
+
+    private fun polishChartUi(
+        casesSet: MutableList<Entry>,
+        deathsSet: MutableList<Entry>,
+        recoveredSet: MutableList<Entry>
+    ): Triple<LineDataSet, LineDataSet, LineDataSet> {
+        // Hide description on the bottom right
+        timelineChart.description.text = ""
+
+        timelineChart.axisRight.mAxisMinimum = 0f
+
+        // To hide grid
+        timelineChart.xAxis.setDrawGridLines(false)
+
+        // TO hide right y axis
+        timelineChart.axisRight.isEnabled = false
+
+        val xAxis: XAxis = timelineChart.xAxis
+        xAxis.position = XAxisPosition.BOTTOM_INSIDE
+
+        val dpInPx = deviceHelper.convertDpToPixel(1f)
+        val threeDpInPx = deviceHelper.convertDpToPixel(3f)
+
+        val casesDataSet = LineDataSet(casesSet, "cases")
+        casesDataSet.setColors(
+            intArrayOf(android.R.color.holo_orange_dark),
+            requireContext()
+        )
+        casesDataSet.setCircleColors(
+            intArrayOf(android.R.color.holo_orange_dark),
+            requireContext()
+        )
+        casesDataSet.lineWidth = dpInPx.toFloat()
+        casesDataSet.circleRadius = dpInPx.toFloat()
+        casesDataSet.valueTextSize = threeDpInPx.toFloat()
+
+        val deathsDataSet = LineDataSet(deathsSet, "deaths")
+        deathsDataSet.setColors(
+            intArrayOf(android.R.color.holo_red_dark),
+            requireContext()
+        )
+        deathsDataSet.setCircleColors(
+            intArrayOf(android.R.color.holo_red_dark),
+            requireContext()
+        )
+        deathsDataSet.lineWidth = dpInPx.toFloat()
+        deathsDataSet.circleRadius = dpInPx.toFloat()
+        deathsDataSet.valueTextSize = threeDpInPx.toFloat()
+
+        val recoveredDataSet = LineDataSet(recoveredSet, "recovered")
+        recoveredDataSet.setColors(
+            intArrayOf(android.R.color.holo_green_dark),
+            requireContext()
+        )
+        recoveredDataSet.setCircleColors(
+            intArrayOf(android.R.color.holo_green_dark),
+            requireContext()
+        )
+        recoveredDataSet.lineWidth = dpInPx.toFloat()
+        recoveredDataSet.circleRadius = dpInPx.toFloat()
+        recoveredDataSet.valueTextSize = threeDpInPx.toFloat()
+        
+        return Triple(casesDataSet, deathsDataSet, recoveredDataSet)
     }
 }

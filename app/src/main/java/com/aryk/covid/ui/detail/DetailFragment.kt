@@ -67,18 +67,16 @@ class DetailFragment : Fragment() {
         }
 
         detailSwipeRefresh.setOnRefreshListener {
-            casesValue.text = "_"
             todayCasesValue.text = "_"
-
-            deathsValue.text = "_"
             todayDeathsValue.text = "_"
 
-            recoveredCasesValue.text = "_"
-            activeValue.text = "_"
-            criticalValue.text = "_"
+            perMillionCasesValue.text = "_"
+            perMillionDeathsValue.text = "_"
 
-            casesPerMillionValue.text = "_"
-            deathsPerMillionValue.text = "_"
+            totalCasesValue.text = "_"
+            totalDeathsValue.text = "_"
+            totalRecoveredValue.text = "_"
+            totalCriticalValue.text = "_"
 
             detailViewModel.inputs.onLoadData()
             detailSwipeRefresh.isRefreshing = false
@@ -87,18 +85,16 @@ class DetailFragment : Fragment() {
         detailViewModel.outputs.countryData.observe(viewLifecycleOwner, Observer { event ->
             event.getContentIfNotHandled()?.let { countryData ->
 
-                casesValue.text = countryData.cases.toString()
                 todayCasesValue.text = countryData.todayCases.toString()
-
-                deathsValue.text = countryData.deaths.toString()
                 todayDeathsValue.text = countryData.todayDeaths.toString()
 
-                recoveredCasesValue.text = countryData.recovered.toString()
-                activeValue.text = countryData.active.toString()
-                criticalValue.text = countryData.critical.toString()
+                perMillionCasesValue.text = countryData.casesPerOneMillion.toString()
+                perMillionDeathsValue.text = countryData.deathsPerOneMillion.toString()
 
-                casesPerMillionValue.text = countryData.casesPerOneMillion.toString()
-                deathsPerMillionValue.text = countryData.deathsPerOneMillion.toString()
+                totalCasesValue.text = countryData.cases.toString()
+                totalDeathsValue.text = countryData.deaths.toString()
+                totalRecoveredValue.text = countryData.recovered.toString()
+                totalCriticalValue.text = countryData.critical.toString()
 
                 countryData.updated?.let { updatedAtString ->
                     updatedAt.text = getString(

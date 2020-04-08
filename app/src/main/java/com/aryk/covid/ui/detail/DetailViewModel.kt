@@ -9,7 +9,6 @@ import com.aryk.covid.models.FormattedTimelineData
 import com.aryk.covid.persistance.LocalDatabase
 import com.aryk.covid.repositories.DataRepository
 import com.aryk.network.models.ningaApi.CountryData
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach

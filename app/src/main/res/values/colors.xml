@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">#a63031</color>
     <color name="colorAccent">#2F2D30</color>
 
-    <color name="silver">#B9B9B9</color>
+    <color name="alto">#d8d8d8</color>
     <color name="tulipTree">#EEAA3E</color>
     <color name="frenchGrey">#c8c7cc</color>
 
@@ -14,4 +14,5 @@
     <color name="doveGray">#6f6f6f</color>
 
     <color name="white_60">#99ffffff</color>
+    <color name="silver">#c5c5c5</color>
 </resources>
