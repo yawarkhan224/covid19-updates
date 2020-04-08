@@ -22,7 +22,9 @@ data class CountryData(
     val critical: Int? = null,
     val casesPerOneMillion: Double? = null,
     val deathsPerOneMillion: Double? = null,
-    val updated: String? = null
+    val updated: String? = null,
+    val tests: Int? = null,
+    val testsPerOneMillion: Double? = null
 ) : Parcelable
 
 class CountryInfoConverter {

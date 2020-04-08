@@ -6,7 +6,6 @@
     <string name="today">Today</string>
     <string name="total">Total</string>
     <string name="perMillion">Per million of population</string>
-    <string name="test">Tests</string>
 
     <string name="dataMissing">Unfortunately there seem to be some issue fetching required data. Kindly make sure that you have an active network connection and try again later.</string>
 
@@ -24,6 +23,7 @@
     <string name="cases_per_one_million">Cases Per 1M</string>
     <string name="deaths_per_one_million">Deaths Per 1M</string>
     <string name="last_updated">last Update \n%s</string>
+    <string name="tests">Tests</string>
 
     <!-- For Detail View-->
 

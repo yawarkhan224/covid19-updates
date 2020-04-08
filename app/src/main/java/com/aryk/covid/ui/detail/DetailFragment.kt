@@ -72,9 +72,11 @@ class DetailFragment : Fragment() {
 
             perMillionCasesValue.text = "_"
             perMillionDeathsValue.text = "_"
+            perMillionTestsValue.text = "_"
 
             totalCasesValue.text = "_"
             totalDeathsValue.text = "_"
+            totalTestsValue.text = "_"
             totalRecoveredValue.text = "_"
             totalCriticalValue.text = "_"
 
@@ -90,9 +92,11 @@ class DetailFragment : Fragment() {
 
                 perMillionCasesValue.text = countryData.casesPerOneMillion.toString()
                 perMillionDeathsValue.text = countryData.deathsPerOneMillion.toString()
+                perMillionTestsValue.text = countryData.testsPerOneMillion.toString()
 
                 totalCasesValue.text = countryData.cases.toString()
                 totalDeathsValue.text = countryData.deaths.toString()
+                totalTestsValue.text = countryData.tests.toString()
                 totalRecoveredValue.text = countryData.recovered.toString()
                 totalCriticalValue.text = countryData.critical.toString()
 

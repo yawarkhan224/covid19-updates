@@ -211,7 +211,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/perMillionCard"
                     android:layout_width="0dp"
-                    android:layout_height="120dp"
+                    android:layout_height="168dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
@@ -295,7 +295,7 @@
                             tools:text="TextView" />
 
                         <View
-                            android:id="@+id/perMillionDivider"
+                            android:id="@+id/perMillionDivider1"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@color/alto"
@@ -312,7 +312,7 @@
                             android:layout_marginTop="12dp"
                             android:layout_marginBottom="12dp"
                             android:tint="@android:color/black"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintBottom_toTopOf="@+id/perMillionTestsImageView"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/perMillionCasesImageView"
                             app:srcCompat="@drawable/ic_death" />
@@ -329,7 +329,7 @@
                             android:maxLines="1"
                             android:text="@string/deaths"
                             android:textAlignment="textStart"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintBottom_toTopOf="@+id/perMillionTests"
                             app:layout_constraintEnd_toStartOf="@+id/perMillionDeathsValue"
                             app:layout_constraintStart_toEndOf="@+id/perMillionDeathsImageView"
                             app:layout_constraintTop_toBottomOf="@+id/perMillionCases" />
@@ -339,19 +339,77 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
+                            android:layout_marginTop="14dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginBottom="15dp"
+                            android:ellipsize="end"
+                            android:textAlignment="textEnd"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                            android:textColor="@android:color/holo_red_dark"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toTopOf="@+id/perMillionTestsValue"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="1.0"
+                            app:layout_constraintStart_toEndOf="@+id/perMillionCases"
+                            app:layout_constraintTop_toBottomOf="@+id/perMillionCasesValue"
+                            tools:text="TextView" />
+
+                        <View
+                            android:id="@+id/perMillionDivider2"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/alto"
+                            app:layout_constraintBottom_toTopOf="@id/perMillionTests"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/perMillionDeaths" />
+
+                        <ImageView
+                            android:id="@+id/perMillionTestsImageView"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginBottom="12dp"
+                            android:tint="@android:color/black"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/perMillionDeathsImageView"
+                            app:srcCompat="@drawable/ic_accessibility" />
+
+                        <TextView
+                            android:id="@+id/perMillionTests"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="16dp"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="@string/tests"
+                            android:textAlignment="textStart"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/perMillionTestsValue"
+                            app:layout_constraintStart_toEndOf="@+id/perMillionTestsImageView"
+                            app:layout_constraintTop_toBottomOf="@+id/perMillionDeaths" />
+
+                        <TextView
+                            android:id="@+id/perMillionTestsValue"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
                             android:layout_marginTop="15dp"
                             android:layout_marginEnd="16dp"
                             android:layout_marginBottom="14dp"
                             android:ellipsize="end"
                             android:textAlignment="textEnd"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                            android:textColor="@android:color/holo_red_dark"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="1.0"
-                            app:layout_constraintStart_toEndOf="@+id/perMillionCases"
-                            app:layout_constraintTop_toBottomOf="@+id/perMillionCasesValue"
+                            app:layout_constraintStart_toEndOf="@+id/perMillionTests"
+                            app:layout_constraintTop_toBottomOf="@+id/perMillionDeathsValue"
                             tools:text="TextView" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
@@ -359,7 +417,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/totalCard"
                     android:layout_width="0dp"
-                    android:layout_height="220dp"
+                    android:layout_height="268dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
@@ -462,7 +520,7 @@
                             android:layout_marginTop="12dp"
                             android:layout_marginBottom="12dp"
                             android:tint="@android:color/black"
-                            app:layout_constraintBottom_toTopOf="@+id/totalRecoveredImageView"
+                            app:layout_constraintBottom_toTopOf="@+id/totalTestsImageView"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/totalCasesImageView"
                             app:srcCompat="@drawable/ic_death" />
@@ -479,7 +537,7 @@
                             android:maxLines="1"
                             android:text="@string/deaths"
                             android:textAlignment="textStart"
-                            app:layout_constraintBottom_toTopOf="@+id/totalRecovered"
+                            app:layout_constraintBottom_toTopOf="@id/totalTests"
                             app:layout_constraintEnd_toStartOf="@+id/totalDeathsValue"
                             app:layout_constraintHorizontal_bias="0.0"
                             app:layout_constraintStart_toEndOf="@+id/totalDeathsImageView"
@@ -498,7 +556,7 @@
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                             android:textColor="@android:color/holo_red_dark"
                             android:textStyle="bold"
-                            app:layout_constraintBottom_toTopOf="@+id/totalRecoveredValue"
+                            app:layout_constraintBottom_toTopOf="@id/totalTestsValue"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/totalDeaths"
                             app:layout_constraintTop_toBottomOf="@+id/totalCasesValue"
@@ -509,10 +567,70 @@
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@color/alto"
-                            app:layout_constraintBottom_toTopOf="@id/totalRecovered"
+                            app:layout_constraintBottom_toTopOf="@id/totalTests"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/totalDeaths" />
+
+                        <ImageView
+                            android:id="@+id/totalTestsImageView"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginBottom="12dp"
+                            android:tint="@android:color/black"
+                            app:layout_constraintBottom_toTopOf="@+id/totalRecoveredImageView"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/totalDeathsImageView"
+                            app:srcCompat="@drawable/ic_accessibility" />
+
+                        <TextView
+                            android:id="@+id/totalTests"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="16dp"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="@string/tests"
+                            android:textAlignment="textStart"
+                            app:layout_constraintBottom_toTopOf="@+id/totalRecovered"
+                            app:layout_constraintEnd_toStartOf="@+id/totalTestsValue"
+                            app:layout_constraintStart_toEndOf="@+id/totalDeathsImageView"
+                            app:layout_constraintTop_toBottomOf="@+id/totalDeaths" />
+
+                        <TextView
+                            android:id="@+id/totalTestsValue"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="15dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginBottom="14dp"
+                            android:ellipsize="end"
+                            android:textAlignment="textEnd"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toTopOf="@+id/totalRecoveredValue"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/totalTests"
+                            app:layout_constraintTop_toBottomOf="@+id/totalDeathsValue"
+                            tools:text="TextView" />
+
+                        <View
+                            android:id="@+id/totalDivider3"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginBottom="16dp"
+                            android:background="@color/alto"
+                            app:layout_constraintBottom_toTopOf="@id/totalRecovered"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/totalTests" />
 
                         <ImageView
                             android:id="@+id/totalRecoveredImageView"
@@ -524,7 +642,7 @@
                             android:tint="@android:color/black"
                             app:layout_constraintBottom_toTopOf="@+id/totalCricticalImageView"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/totalDeathsImageView"
+                            app:layout_constraintTop_toBottomOf="@+id/totalTestsImageView"
                             app:srcCompat="@drawable/ic_recoved" />
 
                         <TextView
@@ -543,16 +661,16 @@
                             app:layout_constraintEnd_toStartOf="@+id/totalRecoveredValue"
                             app:layout_constraintHorizontal_bias="0.0"
                             app:layout_constraintStart_toEndOf="@+id/totalRecoveredImageView"
-                            app:layout_constraintTop_toBottomOf="@+id/totalDeaths" />
+                            app:layout_constraintTop_toBottomOf="@+id/totalTests" />
 
                         <TextView
                             android:id="@+id/totalRecoveredValue"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:layout_marginTop="15dp"
+                            android:layout_marginTop="14dp"
                             android:layout_marginEnd="16dp"
-                            android:layout_marginBottom="14dp"
+                            android:layout_marginBottom="15dp"
                             android:ellipsize="end"
                             android:textAlignment="textEnd"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
@@ -561,11 +679,11 @@
                             app:layout_constraintBottom_toTopOf="@+id/totalCriticalValue"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/totalRecovered"
-                            app:layout_constraintTop_toBottomOf="@+id/totalDeathsValue"
+                            app:layout_constraintTop_toBottomOf="@+id/totalTestsValue"
                             tools:text="TextView" />
 
                         <View
-                            android:id="@+id/totalDivider3"
+                            android:id="@+id/totalDivider4"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             android:background="@color/alto"
@@ -610,9 +728,9 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:layout_marginTop="14dp"
+                            android:layout_marginTop="15dp"
                             android:layout_marginEnd="16dp"
-                            android:layout_marginBottom="15dp"
+                            android:layout_marginBottom="14dp"
                             android:ellipsize="end"
                             android:textAlignment="textEnd"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
@@ -621,7 +739,7 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/totalCritical"
-                            app:layout_constraintTop_toBottomOf="@+id/totalRecoveredValue"
+                            app:layout_constraintTop_toBottomOf="@id/totalRecoveredValue"
                             tools:text="TextView" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
