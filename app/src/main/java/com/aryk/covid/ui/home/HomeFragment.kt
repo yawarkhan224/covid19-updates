@@ -71,7 +71,7 @@ class HomeFragment : Fragment() {
                 adapter = countryListAdapter
             }
 
-            dataMissing.visibility = View.GONE
+            errorView.visibility = View.GONE
             homeViewModel.inputs.onLoadData()
             countriesSwipeRefresh.isRefreshing = false
         }
@@ -79,7 +79,7 @@ class HomeFragment : Fragment() {
         homeViewModel.outputs.countriesData.observe(viewLifecycleOwner, Observer { event ->
             event.getContentIfNotHandled()?.let {
                 if (it.isEmpty()) {
-                    dataMissing.visibility = View.VISIBLE
+                    errorView.visibility = View.VISIBLE
                 } else {
                     countryListAdapter.submitList(it)
                     countryListAdapter.notifyDataSetChanged()

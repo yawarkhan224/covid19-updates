@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.aryk.covid.helper.Event
 import com.aryk.covid.models.FormattedHistoricalData
 import com.aryk.covid.models.FormattedTimelineData
+import com.aryk.covid.persistance.LocalDatabase
 import com.aryk.covid.repositories.DataRepository
 import com.aryk.network.models.ningaApi.CountryData
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
@@ -19,8 +21,8 @@ import kotlinx.coroutines.launch
 interface DetailViewModelInputs {
     fun onLoadData()
     fun onDataAvailable(data: CountryData, historicalData: FormattedHistoricalData?)
-    fun onShowHistoricalDataClicked()
     fun onLoadHistoricalData()
+    fun onLoadDataFromDb()
 }
 
 @ExperimentalCoroutinesApi
@@ -41,7 +43,8 @@ interface DetailViewModelInterface {
 @SuppressWarnings("ForbiddenComment")
 @ExperimentalCoroutinesApi
 class DetailViewModel(
-    private val dataRepository: DataRepository
+    private val dataRepository: DataRepository,
+    private val localDatabase: LocalDatabase
 ) : ViewModel(), DetailViewModelInterface, DetailViewModelInputs, DetailViewModelOutputs {
     override val countryData: MutableLiveData<Event<CountryData>> = MutableLiveData()
     override val historicalCountryData:
@@ -67,19 +70,23 @@ class DetailViewModel(
         }
     }
 
-    private val onShowHistoricalDataClickedProperty: Channel<Unit> = Channel(1)
-    override fun onShowHistoricalDataClicked() {
-        viewModelScope.launch {
-            onShowHistoricalDataClickedProperty.send(Unit)
-        }
-    }
-
     private val onLoadHistoricalDataProperty: Channel<Unit> = Channel(1)
     override fun onLoadHistoricalData() {
         viewModelScope.launch {
             onLoadHistoricalDataProperty.send(Unit)
         }
     }
+
+    private val onLoadDataFromDbProperty: Channel<Unit> = Channel(1)
+    override fun onLoadDataFromDb() {
+        isLoading.value = Event(true)
+        viewModelScope.launch {
+            onLoadDataFromDbProperty.send(Unit)
+        }
+    }
+
+    // Local Variable
+    var countryName: String? = null
 
     override fun onCleared() {
         super.onCleared()
@@ -91,6 +98,7 @@ class DetailViewModel(
     init {
         viewModelScope.launch {
             onDataAvailableProperty.consumeEach { data ->
+                countryName = data.country
                 countryData.value = Event(data)
             }
         }
@@ -107,7 +115,7 @@ class DetailViewModel(
                     dataRepository.getCountryData(countryName)
                         .onStart { isLoading.value = Event(true) }
                         .catch { exception -> /* _foo.value = error state */
-                            isLoading.value = Event(false)
+                            onLoadDataFromDb()
                         }
                         .collect { nonNullData ->
                             isLoading.value = Event(false)
@@ -120,10 +128,13 @@ class DetailViewModel(
         }
 
         viewModelScope.launch {
-            onShowHistoricalDataClickedProperty.consumeEach {
-                showHistoricalData.value = Event(Unit)
-                historicalCountryData.value =
-                    Event(Pair(historicalCountryData.value?.peekContent()?.first, true))
+            onLoadDataFromDbProperty.consumeEach {
+                countryName?.let {
+                    localDatabase.countryDataDao().getCountryByName(it)?.let {
+                        countryData.value = Event(it)
+                    }
+                }
+                isLoading.value = Event(false)
             }
         }
     }

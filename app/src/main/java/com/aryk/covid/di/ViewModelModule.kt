@@ -13,9 +13,9 @@ val viewModelModule = module {
         HomeViewModel(get(), get())
     }
     viewModel {
-        DetailViewModel(get())
+        DetailViewModel(get(), get())
     }
     viewModel {
-        TimelineViewModel(get())
+        TimelineViewModel(get(), get())
     }
 }

@@ -23,7 +23,7 @@ interface CountryDataDao {
     suspend fun deleteCountry(country: CountryData)
 
     @Query("SELECT * FROM Countries WHERE country == :name")
-    fun getCountryBy(name: String): List<CountryData>
+    suspend fun getCountryByName(name: String): CountryData?
 
     @Query("SELECT * FROM Countries")
     suspend fun getCountries(): List<CountryData>
