@@ -1,5 +1,6 @@
 package com.aryk.covid.di
 
+import com.aryk.covid.helper.DeviceHelper
 import com.aryk.covid.helper.TimeHelper
 import org.koin.dsl.module
 import java.text.DateFormat
@@ -23,7 +24,12 @@ val helperModule = module {
         return TimeHelper(systemTimeFormatter)
     }
 
+    fun provideDeviceHelper(): DeviceHelper {
+        return DeviceHelper()
+    }
+
     single { provideCalender() }
     single { provideSystemTimeFormatter() }
     single { provideTimeHelper(get()) }
+    single { provideDeviceHelper() }
 }
