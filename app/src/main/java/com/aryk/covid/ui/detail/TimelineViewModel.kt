@@ -56,7 +56,7 @@ class TimelineViewModel(
     init {
         viewModelScope.launch {
             onLoadHistoricalDataProperty.consumeEach { countryISO2 ->
-                dataRepository.getHistoricalData2(countryISO2)
+                dataRepository.getHistoricalData(countryISO2)
                     .onStart { isLoading.value = Event(true) }
                     .catch { exception -> /* _foo.value = error state */
                         isLoading.value = Event(false)

@@ -38,7 +38,6 @@ class HomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        homeViewModel.inputs.onLoadHistoricalData()
         homeViewModel.inputs.onLoadData()
     }
 
@@ -72,14 +71,19 @@ class HomeFragment : Fragment() {
                 adapter = countryListAdapter
             }
 
+            dataMissing.visibility = View.GONE
             homeViewModel.inputs.onLoadData()
             countriesSwipeRefresh.isRefreshing = false
         }
 
         homeViewModel.outputs.countriesData.observe(viewLifecycleOwner, Observer { event ->
             event.getContentIfNotHandled()?.let {
-                countryListAdapter.submitList(it)
-                countryListAdapter.notifyDataSetChanged()
+                if (it.isEmpty()) {
+                    dataMissing.visibility = View.VISIBLE
+                } else {
+                    countryListAdapter.submitList(it)
+                    countryListAdapter.notifyDataSetChanged()
+                }
             }
         })
 

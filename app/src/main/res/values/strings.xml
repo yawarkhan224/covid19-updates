@@ -1,15 +1,12 @@
 <resources>
     <string name="app_name">COVID-19 Updates</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
 
     <string name="stats">Statistic</string>
     <string name="timeline">Timeline</string>
 
+    <string name="dataMissing">Unfortunately there seem to be some issue fetching required data. Kindly make sure that you have an active network connection and try again later.</string>
+
     <!-- For Splash Screen-->
-    <string name="stayHome">#stayHome</string>
-    <string name="stayHealthy">#stayHealthy</string>
 
     <!-- For All Countries List View-->
     <string name="country">Country</string>
@@ -25,8 +22,6 @@
     <string name="last_updated">Updated at: %s</string>
 
     <!-- For Detail View-->
-    <string name="show_graphical_data">Show Graphical Data</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

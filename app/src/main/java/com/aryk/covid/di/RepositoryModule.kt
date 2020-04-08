@@ -7,6 +7,6 @@ import org.koin.dsl.module
 @ExperimentalCoroutinesApi
 val repositoryModule = module {
     single {
-        DataRepository(get(), get())
+        DataRepository(get(), get(), get())
     }
 }

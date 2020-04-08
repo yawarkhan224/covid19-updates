@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.aryk.covid.enums.CountriesSortType
 import com.aryk.covid.helper.Event
 import com.aryk.covid.models.FormattedHistoricalData
+import com.aryk.covid.persistance.LocalDatabase
 import com.aryk.covid.repositories.DataRepository
 import com.aryk.network.models.ningaApi.CountryData
-import com.aryk.network.models.ningaApi.CountryHistoricalData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
@@ -19,15 +19,14 @@ import kotlinx.coroutines.launch
 
 interface HomeViewModelInputs {
     fun onLoadData()
-    fun onLoadHistoricalData()
     fun onCountrySelected(id: Int)
     fun onSortData(sortBy: String)
+    fun onLoadDataFromDb()
 }
 
 @ExperimentalCoroutinesApi
 interface HomeViewModelOutputs {
     val countriesData: MutableLiveData<Event<List<CountryData>>>
-    val countriesHistoricalData: MutableLiveData<Event<List<CountryHistoricalData>>>
     val selectedCountry: MutableLiveData<Event<Pair<CountryData, FormattedHistoricalData?>>>
     val isLoading: MutableLiveData<Event<Boolean>>
 }
@@ -41,12 +40,10 @@ interface HomeViewModelInterface {
 @SuppressWarnings("ForbiddenComment")
 @ExperimentalCoroutinesApi
 class HomeViewModel(
-    private val dataRepository: DataRepository
+    private val dataRepository: DataRepository,
+    private val localDatabase: LocalDatabase
 ) : ViewModel(), HomeViewModelInterface, HomeViewModelInputs, HomeViewModelOutputs {
-
     override var countriesData: MutableLiveData<Event<List<CountryData>>> = MutableLiveData()
-    override var countriesHistoricalData: MutableLiveData<Event<List<CountryHistoricalData>>> =
-        MutableLiveData()
     override var selectedCountry:
             MutableLiveData<Event<Pair<CountryData, FormattedHistoricalData?>>> = MutableLiveData()
     override val isLoading: MutableLiveData<Event<Boolean>> = MutableLiveData()
@@ -56,14 +53,6 @@ class HomeViewModel(
         viewModelScope.launch {
             isLoading.value = Event(true)
             onLoadDataProperty.send(Unit)
-        }
-    }
-
-    private val onLoadHistoricalDataProperty: Channel<Unit> = Channel(1)
-    override fun onLoadHistoricalData() {
-        viewModelScope.launch {
-            // isLoading.value = Event(true)
-            onLoadHistoricalDataProperty.send(Unit)
         }
     }
 
@@ -82,13 +71,21 @@ class HomeViewModel(
         }
     }
 
+    private val onLoadDataFromDbProperty: Channel<Unit> = Channel(1)
+    override fun onLoadDataFromDb() {
+        isLoading.value = Event(true)
+        viewModelScope.launch {
+            onLoadDataFromDbProperty.send(Unit)
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
 
         onLoadDataProperty.cancel()
         onCountrySelectedProperty.cancel()
-        onLoadHistoricalDataProperty.cancel()
         onSortDataProperty.cancel()
+        onLoadDataFromDbProperty.cancel()
     }
 
     init {
@@ -97,7 +94,7 @@ class HomeViewModel(
                 dataRepository.getAllCountriesData(null)
                     .onStart { isLoading.value = Event(true) }
                     .catch { exception -> /* _foo.value = error state */
-                        isLoading.value = Event(false)
+                        onLoadDataFromDb()
                     }
                     .collect { nonNullList ->
                         isLoading.value = Event(false)
@@ -108,26 +105,9 @@ class HomeViewModel(
         }
 
         viewModelScope.launch {
-            onLoadHistoricalDataProperty.consumeEach {
-                val data: List<CountryHistoricalData>? = dataRepository.getHistoricalData()
-                data?.let { nonNullList ->
-                    // isLoading.value = Event(false)
-                    countriesHistoricalData.value = Event(nonNullList)
-                } ?: kotlin.run {
-                    // isLoading.value = Event(false)
-                    // TODO: Handle error for data loading failure
-                }
-            }
-        }
-
-        viewModelScope.launch {
             onCountrySelectedProperty.consumeEach { selectedIndex ->
                 countriesData.value?.let { countries ->
                     val selectedCountryData = countries.peekContent()[selectedIndex]
-//                    val selectedCountryHistoricalData =
-//                        countriesHistoricalData.value!!.peekContent().last {
-//                            it.country == selectedCountryData.country && it.province == null
-//                        }
 
                     selectedCountry.value =
                         Event(
@@ -166,6 +146,13 @@ class HomeViewModel(
 
                     isLoading.value = Event(false)
                 }
+            }
+        }
+
+        viewModelScope.launch {
+            onLoadDataFromDbProperty.consumeEach {
+                countriesData.value = Event(localDatabase.countryDataDao().getCountries())
+                isLoading.value = Event(false)
             }
         }
     }

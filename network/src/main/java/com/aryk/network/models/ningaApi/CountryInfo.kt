@@ -1,12 +1,15 @@
 package com.aryk.network.models.ningaApi
 
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
+@Entity(tableName = "countryInfo")
 @Parcelize
 data class CountryInfo(
-    @SerializedName("_id") val id: Int? = null,
+    @PrimaryKey @SerializedName("_id") val id: Int,
     val lat: Double? = null,
     val long: Double? = null,
     val flag: String? = null,
