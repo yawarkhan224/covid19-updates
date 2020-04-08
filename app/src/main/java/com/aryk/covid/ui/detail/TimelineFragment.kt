@@ -60,7 +60,6 @@ class TimelineFragment : Fragment() {
 
         timelineViewModel.outputs.historicalData.observe(viewLifecycleOwner, Observer { event ->
             event.getContentIfNotHandled()?.let { timelineData ->
-
                 timelineData.let { map ->
                     val c = map.cases.keys
                     val d = map.deaths.keys
@@ -89,6 +88,28 @@ class TimelineFragment : Fragment() {
                         LineDataSet(deathsSet, "deaths"),
                         LineDataSet(recoveredSet, "recovered")
                     )
+
+                    timelineChart.visibility = View.VISIBLE
+                }
+            }
+        })
+
+        timelineViewModel.outputs.isLoading.observe(viewLifecycleOwner, Observer { event ->
+            event.getContentIfNotHandled()?.let { isLoading ->
+                timelineProgressBar.visibility = if (isLoading) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
+            }
+        })
+
+        timelineViewModel.outputs.showErrorView.observe(viewLifecycleOwner, Observer { event ->
+            event.getContentIfNotHandled()?.let { showError ->
+                errorView.visibility = if (showError) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
                 }
             }
         })

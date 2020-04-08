@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.aryk.covid.extensions.toFormattedTimelineData
 import com.aryk.covid.helper.Event
 import com.aryk.covid.models.FormattedTimelineData
+import com.aryk.covid.persistance.LocalDatabase
 import com.aryk.covid.repositories.DataRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -21,9 +22,9 @@ interface TimelineViewModelInputs {
 
 @ExperimentalCoroutinesApi
 interface TimelineViewModelOutputs {
-
     val historicalData: MutableLiveData<Event<FormattedTimelineData>>
     val isLoading: MutableLiveData<Event<Boolean>>
+    val showErrorView: MutableLiveData<Event<Boolean>>
 }
 
 @ExperimentalCoroutinesApi
@@ -35,10 +36,12 @@ interface TimelineViewModelInterface {
 @SuppressWarnings("ForbiddenComment")
 @ExperimentalCoroutinesApi
 class TimelineViewModel(
-    private val dataRepository: DataRepository
+    private val dataRepository: DataRepository,
+    private val localDatabase: LocalDatabase
 ) : ViewModel(), TimelineViewModelInterface, TimelineViewModelInputs, TimelineViewModelOutputs {
     override val historicalData: MutableLiveData<Event<FormattedTimelineData>> = MutableLiveData()
     override val isLoading: MutableLiveData<Event<Boolean>> = MutableLiveData()
+    override val showErrorView: MutableLiveData<Event<Boolean>> = MutableLiveData()
 
     private val onLoadHistoricalDataProperty: Channel<String> = Channel(1)
     override fun onLoadHistoricalData(iso2: String) {
@@ -60,6 +63,7 @@ class TimelineViewModel(
                     .onStart { isLoading.value = Event(true) }
                     .catch { exception -> /* _foo.value = error state */
                         isLoading.value = Event(false)
+                        showErrorView.value = Event(true)
                     }
                     .collect { nonNullData ->
                         isLoading.value = Event(false)
