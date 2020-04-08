@@ -57,6 +57,8 @@ dependencies {
 
     graphicsDependencies()
 
+    persistenceDependencies()
+
     implementation(project(":network"))
 
     ktlint(CodeQualityLibraries.ktlint)
