@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.aryk.covid.MainActivity
 import com.aryk.covid.R
 import com.aryk.covid.ui.detail.adapters.DetailAndTimelineFragmentStatePagerAdapter
 import com.aryk.network.models.ningaApi.CountryData
@@ -66,6 +67,9 @@ class DetailAndTimelineFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
+        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        (activity as MainActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
+
         arguments?.getParcelable<CountryData>(ARG_SELECTED_COUNTRY)?.let {
             activity?.title = it.country
         }
@@ -73,6 +77,9 @@ class DetailAndTimelineFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+
+        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        (activity as MainActivity).supportActionBar?.setDisplayShowHomeEnabled(false)
 
         activity?.title = getString(R.string.app_name)
     }

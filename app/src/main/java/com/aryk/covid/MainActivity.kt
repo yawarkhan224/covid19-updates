@@ -20,5 +20,12 @@ class MainActivity : AppCompatActivity() {
                 .add(R.id.nav_host_fragment, HomeFragment(), "home_fragment")
                 .commit()
         }
+
+        supportActionBar?.elevation = 0f
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 }
