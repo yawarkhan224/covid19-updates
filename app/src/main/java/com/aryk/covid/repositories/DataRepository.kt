@@ -22,6 +22,7 @@ class DataRepository(
         return flow {
             // execute API call
             val data = ningaService.getAllCountriesData(sort ?: CountriesSortType.Cases.name)
+                .sortedWith(compareBy<CountryData> { -(it.cases ?: 0) })
 
             // Emit the list to the stream
             localDatabase.countryDataDao().insertCountries(data)

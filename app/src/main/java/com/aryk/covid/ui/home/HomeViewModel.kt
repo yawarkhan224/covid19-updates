@@ -99,7 +99,7 @@ class HomeViewModel(
                     .collect { nonNullList ->
                         isLoading.value = Event(false)
                         countriesData.value =
-                            Event(nonNullList.sortedWith(compareBy { -(it.cases ?: 0) }))
+                            Event(nonNullList)
                     }
             }
         }
