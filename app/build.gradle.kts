@@ -3,6 +3,7 @@ plugins {
     id("kotlin-android")
     id("kotlin-android-extensions")
     id("kotlin-kapt")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -25,6 +26,10 @@ android {
                     getDefaultProguardFile("proguard-android-optimize.txt"),
                     "proguard-rules.pro"
             )
+        }
+
+        maybeCreate("debug").apply {
+            applicationIdSuffix = ".debug"
         }
     }
 
@@ -58,6 +63,8 @@ dependencies {
     graphicsDependencies()
 
     persistenceDependencies()
+
+    firebaseDependencies()
 
     implementation(project(":network"))
 

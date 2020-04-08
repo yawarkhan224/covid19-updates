@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "374434825495",
+    "firebase_url": "https://covid19-updates-app.firebaseio.com",
+    "project_id": "covid19-updates-app",
+    "storage_bucket": "covid19-updates-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:374434825495:android:621690c14a2654dfb3e352",
+        "android_client_info": {
+          "package_name": "com.aryk.covid.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "374434825495-o7t1pabub9g2kgu1a6b9s75qc4vdvpcd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aryk.covid.debug",
+            "certificate_hash": "8bd960bc73f12fb145b8cb5ab1bd877780deb7c2"
+          }
+        },
+        {
+          "client_id": "374434825495-qrth35nq4hea9lsimduqvfeno10mljvo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB91_YF-VQF5M7jdOqGbNIDFAeOZgY2Rao"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "374434825495-qrth35nq4hea9lsimduqvfeno10mljvo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -13,6 +13,7 @@ object Libraries {
         const val materialDesign = "1.1.0"
         const val navigation = "2.2.1"
         const val lifecycle = "2.2.0"
+        const val googleServices = "4.3.3"
 
         // Dependency Injection
         const val koin = "2.1.5"

@@ -179,7 +179,7 @@ class TimelineFragment : Fragment() {
         recoveredDataSet.lineWidth = dpInPx.toFloat()
         recoveredDataSet.circleRadius = dpInPx.toFloat()
         recoveredDataSet.valueTextSize = threeDpInPx.toFloat()
-        
+
         return Triple(casesDataSet, deathsDataSet, recoveredDataSet)
     }
 }
