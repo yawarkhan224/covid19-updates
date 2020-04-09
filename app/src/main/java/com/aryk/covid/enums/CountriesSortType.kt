@@ -7,8 +7,14 @@ enum class CountriesSortType(val key: String) {
     Recovered("recovered");
 
     companion object {
-        fun fromSorterType(key: String?): CountriesSortType? {
-            return CountriesSortType.values().find { sorterType ->
+        fun fromSorterName(name: String?): CountriesSortType? {
+            return values().find { sorterType ->
+                sorterType.name == name
+            }
+        }
+
+        fun fromSorterKey(key: String?): CountriesSortType? {
+            return values().find { sorterType ->
                 sorterType.key == key
             }
         }

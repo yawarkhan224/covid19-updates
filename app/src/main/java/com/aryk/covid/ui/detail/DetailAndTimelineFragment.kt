@@ -3,6 +3,7 @@ package com.aryk.covid.ui.detail
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -33,6 +34,11 @@ class DetailAndTimelineFragment : Fragment() {
 
     private lateinit var detailAndTimelinePagerAdapter: DetailAndTimelineFragmentStatePagerAdapter
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setHasOptionsMenu(true)
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -82,5 +88,11 @@ class DetailAndTimelineFragment : Fragment() {
         (activity as MainActivity).supportActionBar?.setDisplayShowHomeEnabled(false)
 
         activity?.title = getString(R.string.app_name)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        menu.findItem(R.id.sortBy).isVisible = false
+        menu.findItem(R.id.aboutApp).isVisible = false
     }
 }

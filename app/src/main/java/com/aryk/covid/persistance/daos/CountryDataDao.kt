@@ -25,6 +25,11 @@ interface CountryDataDao {
     @Query("SELECT * FROM Countries WHERE country == :name")
     suspend fun getCountryByName(name: String): CountryData?
 
-    @Query("SELECT * FROM Countries")
-    suspend fun getCountries(): List<CountryData>
+    @Query(
+        "SELECT * FROM Countries ORDER BY " +
+                "CASE WHEN :sortBy = 'cases' THEN cases END DESC," +
+                " CASE WHEN :sortBy = 'deaths' THEN deaths END DESC," +
+                " CASE WHEN :sortBy = 'recovered' THEN recovered END DESC"
+    )
+    suspend fun getCountries(sortBy: String): List<CountryData>
 }

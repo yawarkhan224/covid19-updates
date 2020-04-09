@@ -1,6 +1,5 @@
 package com.aryk.covid.repositories
 
-import com.aryk.covid.enums.CountriesSortType
 import com.aryk.covid.persistance.LocalDatabase
 import com.aryk.network.NingaApiService
 import com.aryk.network.VirusTrackerApiService
@@ -21,11 +20,12 @@ class DataRepository(
     override suspend fun getAllCountriesData(sort: String?): Flow<List<CountryData>> {
         return flow {
             // execute API call
-            val data = ningaService.getAllCountriesData(sort ?: CountriesSortType.Cases.name)
-                .sortedWith(compareBy<CountryData> { -(it.cases ?: 0) })
+            val data = ningaService.getAllCountriesData(sort)
 
             // Emit the list to the stream
-            localDatabase.countryDataDao().insertCountries(data)
+            localDatabase.countryDataDao().insertCountries(
+                data.sortedWith(compareBy<CountryData> { -(it.cases ?: 0) })
+            )
             emit(data)
         }.flowOn(Dispatchers.IO) // Use the IO thread for this Flow
     }

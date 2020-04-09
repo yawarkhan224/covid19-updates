@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aryk.covid.enums.CountriesSortType
 import com.aryk.covid.helper.Event
-import com.aryk.covid.models.FormattedHistoricalData
 import com.aryk.covid.persistance.LocalDatabase
 import com.aryk.covid.repositories.DataRepository
 import com.aryk.network.models.ningaApi.CountryData
@@ -18,7 +17,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 interface HomeViewModelInputs {
-    fun onLoadData()
+    fun onLoadData(sortBy: String?)
     fun onCountrySelected(id: Int)
     fun onSortData(sortBy: String)
     fun onLoadDataFromDb()
@@ -27,7 +26,7 @@ interface HomeViewModelInputs {
 @ExperimentalCoroutinesApi
 interface HomeViewModelOutputs {
     val countriesData: MutableLiveData<Event<List<CountryData>>>
-    val selectedCountry: MutableLiveData<Event<Pair<CountryData, FormattedHistoricalData?>>>
+    val selectedCountry: MutableLiveData<Event<CountryData>>
     val isLoading: MutableLiveData<Event<Boolean>>
 }
 
@@ -45,14 +44,14 @@ class HomeViewModel(
 ) : ViewModel(), HomeViewModelInterface, HomeViewModelInputs, HomeViewModelOutputs {
     override var countriesData: MutableLiveData<Event<List<CountryData>>> = MutableLiveData()
     override var selectedCountry:
-            MutableLiveData<Event<Pair<CountryData, FormattedHistoricalData?>>> = MutableLiveData()
+            MutableLiveData<Event<CountryData>> = MutableLiveData()
     override val isLoading: MutableLiveData<Event<Boolean>> = MutableLiveData()
 
-    private val onLoadDataProperty: Channel<Unit> = Channel(1)
-    override fun onLoadData() {
+    private val onLoadDataProperty: Channel<String?> = Channel(1)
+    override fun onLoadData(sortBy: String?) {
         viewModelScope.launch {
             isLoading.value = Event(true)
-            onLoadDataProperty.send(Unit)
+            onLoadDataProperty.send(sortBy)
         }
     }
 
@@ -63,11 +62,16 @@ class HomeViewModel(
         }
     }
 
-    private val onSortDataProperty: Channel<String> = Channel(1)
+    private val onSortDataProperty: MutableLiveData<Event<String>> = MutableLiveData()
     override fun onSortData(sortBy: String) {
-        isLoading.value = Event(true)
         viewModelScope.launch {
-            onSortDataProperty.send(sortBy)
+            val selectedValue = onSortDataProperty.value?.peekContent() ?: ""
+            if (sortBy != selectedValue) {
+                if (!(selectedValue == "" && sortBy != CountriesSortType.Cases.key)) {
+                    isLoading.value = Event(true)
+                    onSortDataProperty.value = Event(sortBy)
+                }
+            }
         }
     }
 
@@ -84,14 +88,21 @@ class HomeViewModel(
 
         onLoadDataProperty.cancel()
         onCountrySelectedProperty.cancel()
-        onSortDataProperty.cancel()
         onLoadDataFromDbProperty.cancel()
     }
 
     init {
         viewModelScope.launch {
             onLoadDataProperty.consumeEach {
-                dataRepository.getAllCountriesData(null)
+                var sortBy = it
+
+//                if (onSortDataProperty.value != null) {
+//                    onSortDataProperty.value?.peekContent()
+//                } else {
+//                    null
+//                }
+
+                dataRepository.getAllCountriesData(sortBy)
                     .onStart { isLoading.value = Event(true) }
                     .catch { exception -> /* _foo.value = error state */
                         onLoadDataFromDb()
@@ -110,12 +121,7 @@ class HomeViewModel(
                     val selectedCountryData = countries.peekContent()[selectedIndex]
 
                     selectedCountry.value =
-                        Event(
-                            Pair(
-                                selectedCountryData,
-                                null
-                            )
-                        )
+                        Event(selectedCountryData)
                 } ?: run {
                     // TODO: Handle Error for empty country list
                 }
@@ -123,24 +129,24 @@ class HomeViewModel(
         }
 
         viewModelScope.launch {
-            onSortDataProperty.consumeEach { sortBy ->
+            onSortDataProperty.observeForever { sortBy ->
                 countriesData.value?.peekContent()?.let { countries ->
-                    when (sortBy) {
+                    when (sortBy.peekContent()) {
                         CountriesSortType.Country.key -> {
                             countriesData.value =
                                 Event(countries.sortedWith(compareBy { it.country }))
                         }
                         CountriesSortType.Cases.key -> {
                             countriesData.value =
-                                Event(countries.sortedWith(compareBy { it.cases }))
+                                Event(countries.sortedWith(compareBy { -(it.cases ?: 0) }))
                         }
                         CountriesSortType.Deaths.key -> {
                             countriesData.value =
-                                Event(countries.sortedWith(compareBy { it.deaths }))
+                                Event(countries.sortedWith(compareBy { -(it.deaths ?: 0) }))
                         }
                         CountriesSortType.Recovered.key -> {
                             countriesData.value =
-                                Event(countries.sortedWith(compareBy { it.recovered }))
+                                Event(countries.sortedWith(compareBy { -(it.recovered ?: 0) }))
                         }
                     }
 
@@ -151,7 +157,8 @@ class HomeViewModel(
 
         viewModelScope.launch {
             onLoadDataFromDbProperty.consumeEach {
-                countriesData.value = Event(localDatabase.countryDataDao().getCountries())
+                val sortBy = onSortDataProperty.value?.peekContent() ?: CountriesSortType.Cases.key
+                countriesData.value = Event(localDatabase.countryDataDao().getCountries(sortBy))
                 isLoading.value = Event(false)
             }
         }
