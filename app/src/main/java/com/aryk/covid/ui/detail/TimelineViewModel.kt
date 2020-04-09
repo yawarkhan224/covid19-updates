@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 interface TimelineViewModelInputs {
-    fun onLoadHistoricalData(iso2: String)
+    fun onLoadHistoricalData(iso2: String?)
 }
 
 @ExperimentalCoroutinesApi
@@ -43,8 +43,8 @@ class TimelineViewModel(
     override val isLoading: MutableLiveData<Event<Boolean>> = MutableLiveData()
     override val showErrorView: MutableLiveData<Event<Boolean>> = MutableLiveData()
 
-    private val onLoadHistoricalDataProperty: Channel<String> = Channel(1)
-    override fun onLoadHistoricalData(iso2: String) {
+    private val onLoadHistoricalDataProperty: Channel<String?> = Channel(1)
+    override fun onLoadHistoricalData(iso2: String?) {
         viewModelScope.launch {
             onLoadHistoricalDataProperty.send(iso2)
         }
@@ -59,16 +59,20 @@ class TimelineViewModel(
     init {
         viewModelScope.launch {
             onLoadHistoricalDataProperty.consumeEach { countryISO2 ->
-                dataRepository.getHistoricalData(countryISO2)
-                    .onStart { isLoading.value = Event(true) }
-                    .catch { exception -> /* _foo.value = error state */
-                        isLoading.value = Event(false)
-                        showErrorView.value = Event(true)
-                    }
-                    .collect { nonNullData ->
-                        isLoading.value = Event(false)
-                        historicalData.value = Event(nonNullData.toFormattedTimelineData())
-                    }
+                countryISO2?.let {
+                    dataRepository.getHistoricalData(it)
+                        .onStart { isLoading.value = Event(true) }
+                        .catch { exception -> /* _foo.value = error state */
+                            isLoading.value = Event(false)
+                            showErrorView.value = Event(true)
+                        }
+                        .collect { nonNullData ->
+                            isLoading.value = Event(false)
+                            historicalData.value = Event(nonNullData.toFormattedTimelineData())
+                        }
+                } ?: run {
+                    // TODO: Handle this case
+                }
             }
         }
     }

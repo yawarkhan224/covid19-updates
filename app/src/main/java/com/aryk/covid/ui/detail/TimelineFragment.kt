@@ -42,6 +42,7 @@ class TimelineFragment : Fragment() {
 
     private val timelineViewModel: TimelineViewModel by viewModel()
     private val deviceHelper: DeviceHelper by inject()
+    private var selectedCountryISO2: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,30 +57,30 @@ class TimelineFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         arguments?.getString(ARG_SELECTED_COUNTRY_ISO2)?.let {
-            timelineViewModel.inputs.onLoadHistoricalData(it)
+            selectedCountryISO2 = it
+            timelineViewModel.inputs.onLoadHistoricalData(selectedCountryISO2)
         } ?: kotlin.run {
             // TODO: Data Missing, Handle this case
         }
 
+        timelineSwipeRefresh.setOnRefreshListener {
+            timelineViewModel.inputs.onLoadHistoricalData(selectedCountryISO2)
+            timelineSwipeRefresh.isRefreshing = false
+        }
+
         timelineViewModel.outputs.historicalData.observe(viewLifecycleOwner, Observer { event ->
             event.getContentIfNotHandled()?.let { timelineData ->
-                timelineData.let { map ->
-                    val c = map.cases.keys
-                    val d = map.deaths.keys
-                    val r = map.recovered.keys
+                timelineChart.visibility = View.GONE
+                errorView.visibility = View.GONE
 
+                timelineData.let { map ->
                     val casesSet: MutableList<Entry> = mutableListOf()
                     val deathsSet: MutableList<Entry> = mutableListOf()
                     val recoveredSet: MutableList<Entry> = mutableListOf()
-                    c.forEach {
-                        casesSet.add(Entry(it, map.cases[it]!!))
-                    }
-                    d.forEach {
-                        deathsSet.add(Entry(it, map.deaths[it]!!))
-                    }
-                    r.forEach {
-                        recoveredSet.add(Entry(it, map.recovered[it]!!))
-                    }
+
+                    map.cases.keys.forEach { casesSet.add(Entry(it, map.cases[it]!!)) }
+                    map.deaths.keys.forEach { deathsSet.add(Entry(it, map.deaths[it]!!)) }
+                    map.recovered.keys.forEach { recoveredSet.add(Entry(it, map.recovered[it]!!)) }
 
                     val (casesDataSet, deathsDataSet, recoveredDataSet) = polishChartUi(
                         casesSet,
