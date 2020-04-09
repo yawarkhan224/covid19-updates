@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/sortBy"
+        android:title="@string/sortBy"
+        android:icon="@drawable/ic_sort"
+        app:actionLayout="@layout/branch_spinner"
+        app:showAsAction="ifRoom"/>
+
+    <!-- Settings, should always be in the overflow -->
+    <item android:id="@+id/aboutApp"
+        android:title="@string/aboutApp"
+        android:icon="@drawable/ic_info"
+        app:showAsAction="never"/>
+</menu>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array
+        name="sort_countries_list_by">
+        <item>@string/cases</item>
+        <item>@string/deaths</item>
+        <item>@string/recovered</item>
+    </string-array>
+</resources>

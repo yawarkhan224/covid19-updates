@@ -6,6 +6,8 @@
     <string name="today">Today</string>
     <string name="total">Total</string>
     <string name="perMillion">Per million of population</string>
+    <string name="sortBy">Sort By</string>
+    <string name="aboutApp">About App</string>
 
     <string name="dataMissing">Unfortunately there seem to be some issue fetching required data. Kindly make sure that you have an active network connection and try again later.</string>
 
