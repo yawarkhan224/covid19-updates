@@ -2,7 +2,6 @@ package com.aryk.network
 
 import com.aryk.network.models.ningaApi.CountryData
 import com.aryk.network.models.ningaApi.CountryHistoricalData
-import com.aryk.network.models.ningaApi.OverAllData
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -18,9 +17,9 @@ interface NingaApiService {
         @Path("country") country: String
     ): CountryData
 
-    @GET("v2/historical")
-    suspend fun getHistoricalData(): List<CountryHistoricalData>
-
-    @GET("all")
-    suspend fun getOverAllData(): OverAllData
+    @GET("v2/historical/{country}")
+    suspend fun getCountryTimelineData(
+        @Path("country") country: String,
+        @Query("lastdays") lastDays: Any?
+    ): CountryHistoricalData
 }

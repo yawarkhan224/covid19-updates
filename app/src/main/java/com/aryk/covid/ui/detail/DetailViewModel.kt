@@ -110,10 +110,10 @@ class DetailViewModel(
 
         viewModelScope.launch {
             onLoadDataProperty.consumeEach {
-                countryData.value!!.peekContent().country.let { countryName ->
+                countryData.value?.peekContent()?.country?.let { countryName ->
                     dataRepository.getCountryData(countryName)
                         .onStart { isLoading.value = Event(true) }
-                        .catch { exception -> /* _foo.value = error state */
+                        .catch {
                             onLoadDataFromDb()
                         }
                         .collect { nonNullData ->

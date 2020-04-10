@@ -23,6 +23,7 @@ interface TimelineViewModelInputs {
 @ExperimentalCoroutinesApi
 interface TimelineViewModelOutputs {
     val historicalData: MutableLiveData<Event<FormattedTimelineData>>
+    val timelineData: MutableLiveData<Event<FormattedTimelineData>>
     val isLoading: MutableLiveData<Event<Boolean>>
     val showErrorView: MutableLiveData<Event<Boolean>>
 }
@@ -40,6 +41,7 @@ class TimelineViewModel(
     private val localDatabase: LocalDatabase
 ) : ViewModel(), TimelineViewModelInterface, TimelineViewModelInputs, TimelineViewModelOutputs {
     override val historicalData: MutableLiveData<Event<FormattedTimelineData>> = MutableLiveData()
+    override val timelineData: MutableLiveData<Event<FormattedTimelineData>> = MutableLiveData()
     override val isLoading: MutableLiveData<Event<Boolean>> = MutableLiveData()
     override val showErrorView: MutableLiveData<Event<Boolean>> = MutableLiveData()
 
@@ -60,9 +62,21 @@ class TimelineViewModel(
         viewModelScope.launch {
             onLoadHistoricalDataProperty.consumeEach { countryISO2 ->
                 countryISO2?.let {
-                    dataRepository.getHistoricalData(it)
+                    // This commented out code is using TheVirusTracker API
+//                    dataRepository.getHistoricalData(it)
+//                        .onStart { isLoading.value = Event(true) }
+//                        .catch { exception -> /* _foo.value = error state */
+//                            isLoading.value = Event(false)
+//                            showErrorView.value = Event(true)
+//                        }
+//                        .collect { nonNullData ->
+//                            isLoading.value = Event(false)
+//                            historicalData.value = Event(nonNullData.toFormattedTimelineData())
+//                        }
+
+                    dataRepository.getCountryTimelineData(it)
                         .onStart { isLoading.value = Event(true) }
-                        .catch { exception -> /* _foo.value = error state */
+                        .catch {
                             isLoading.value = Event(false)
                             showErrorView.value = Event(true)
                         }

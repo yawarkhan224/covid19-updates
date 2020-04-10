@@ -1,9 +1,11 @@
 package com.aryk.covid.repositories
 
+import com.aryk.covid.enums.CountriesSortType
 import com.aryk.covid.persistance.LocalDatabase
 import com.aryk.network.NingaApiService
 import com.aryk.network.VirusTrackerApiService
 import com.aryk.network.models.ningaApi.CountryData
+import com.aryk.network.models.ningaApi.CountryHistoricalData
 import com.aryk.network.models.virusTrackerApi.CountryTimelineResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,7 +22,7 @@ class DataRepository(
     override suspend fun getAllCountriesData(sort: String?): Flow<List<CountryData>> {
         return flow {
             // execute API call
-            val data = ningaService.getAllCountriesData(sort)
+            val data = ningaService.getAllCountriesData(sort ?: CountriesSortType.Cases.key)
 
             // Emit the list to the stream
             localDatabase.countryDataDao().insertCountries(
@@ -44,6 +46,16 @@ class DataRepository(
         return flow {
             // execute API call
             val data = virusTrackerService.getCountryTimeline(countryISO2)
+
+            // Emit the list to the stream
+            emit(data)
+        }.flowOn(Dispatchers.IO) // Use the IO thread for this Flow
+    }
+
+    override suspend fun getCountryTimelineData(countryISO2: String): Flow<CountryHistoricalData> {
+        return flow {
+            // execute API call
+            val data = ningaService.getCountryTimelineData(countryISO2, "all")
 
             // Emit the list to the stream
             emit(data)

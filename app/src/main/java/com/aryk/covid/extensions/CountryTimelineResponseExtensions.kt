@@ -17,7 +17,7 @@ fun CountryTimelineResponse.toFormattedTimelineData(): FormattedTimelineData {
         dateList.forEach { dateValue ->
             // Skip any key which is not of date size
             if (dateValue.length > 6) {
-                val (m, d, y) = dateValue.split("/")
+                val (m, d, _) = dateValue.split("/")
                 val item: CountryTimelineItem =
                     gson.fromJson(gson.toJson(rootMap[dateValue]), CountryTimelineItem::class.java)
                 casesMap[("$m.$d").toFloat()] = item.totalCases?.toFloat() ?: 0f

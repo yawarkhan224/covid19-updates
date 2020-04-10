@@ -60,6 +60,11 @@ class HomeFragment : Fragment() {
             selected = it
             val x = (resources.getStringArray(R.array.sort_countries_list_by))[it]
             sortBy = CountriesSortType.fromSorterName(x)!!.key
+        } ?: run {
+            if (selected >= 0) {
+                val x = (resources.getStringArray(R.array.sort_countries_list_by))[selected]
+                sortBy = CountriesSortType.fromSorterName(x)!!.key
+            }
         }
         return sortBy
     }
@@ -95,7 +100,7 @@ class HomeFragment : Fragment() {
             }
 
             errorView.visibility = View.GONE
-            homeViewModel.inputs.onLoadData(getSortByParam(savedInstanceState))
+            homeViewModel.inputs.onLoadData(getSortByParam(null))
             countriesSwipeRefresh.isRefreshing = false
         }
 
@@ -163,10 +168,9 @@ class HomeFragment : Fragment() {
                 position: Int,
                 id: Long
             ) {
-                view?.let {
-                    val x = (resources.getStringArray(R.array.sort_countries_list_by))[position]
-                    homeViewModel.inputs.onSortData(CountriesSortType.fromSorterName(x)!!.key)
-                }
+                selected = position
+                val x = (resources.getStringArray(R.array.sort_countries_list_by))[position]
+                homeViewModel.inputs.onSortData(CountriesSortType.fromSorterName(x)!!.key)
             }
         }
     }

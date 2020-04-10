@@ -94,17 +94,10 @@ class HomeViewModel(
     init {
         viewModelScope.launch {
             onLoadDataProperty.consumeEach {
-                var sortBy = it
-
-//                if (onSortDataProperty.value != null) {
-//                    onSortDataProperty.value?.peekContent()
-//                } else {
-//                    null
-//                }
-
+                val sortBy = it
                 dataRepository.getAllCountriesData(sortBy)
                     .onStart { isLoading.value = Event(true) }
-                    .catch { exception -> /* _foo.value = error state */
+                    .catch {
                         onLoadDataFromDb()
                     }
                     .collect { nonNullList ->

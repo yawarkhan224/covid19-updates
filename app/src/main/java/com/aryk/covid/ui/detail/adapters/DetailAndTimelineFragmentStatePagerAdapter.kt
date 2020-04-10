@@ -22,7 +22,7 @@ class DetailAndTimelineFragmentStatePagerAdapter(
         return if (position == 0) {
             DetailFragment.newInstance(countryData, null)
         } else {
-            TimelineFragment.newInstance(countryData.countryInfo?.iso2)
+            TimelineFragment.newInstance(countryData.countryInfo?.iso2 ?: countryData.country)
         }
     }
 

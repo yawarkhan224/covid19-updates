@@ -6,6 +6,6 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class CountryHistoricalData(
     val country: String? = null,
-    val province: String? = null,
+    val provinces: List<String>? = null,
     val timeline: TimelineData? = null
 ) : Parcelable
