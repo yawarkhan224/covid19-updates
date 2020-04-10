@@ -171,8 +171,8 @@ class TimelineFragment : Fragment() {
         val xAxis: XAxis = timelineChart.xAxis
         xAxis.position = XAxisPosition.BOTTOM_INSIDE
 
-        val dpInPx = deviceHelper.convertDpToPixel(1f)
-        val threeDpInPx = deviceHelper.convertDpToPixel(3f)
+        val twoSpInPx = deviceHelper.convertDpToPixel(2f)
+        val fourSpInPx = deviceHelper.convertSpToPixel(4f)
 
         val casesDataSet = LineDataSet(casesSet, "cases")
         casesDataSet.setColors(
@@ -183,9 +183,9 @@ class TimelineFragment : Fragment() {
             intArrayOf(android.R.color.holo_orange_dark),
             requireContext()
         )
-        casesDataSet.lineWidth = dpInPx.toFloat()
-        casesDataSet.circleRadius = dpInPx.toFloat()
-        casesDataSet.valueTextSize = threeDpInPx.toFloat()
+        casesDataSet.lineWidth = twoSpInPx.toFloat()
+        casesDataSet.circleRadius = twoSpInPx.toFloat()
+        casesDataSet.valueTextSize = fourSpInPx.toFloat()
 
         val deathsDataSet = LineDataSet(deathsSet, "deaths")
         deathsDataSet.setColors(
@@ -196,9 +196,9 @@ class TimelineFragment : Fragment() {
             intArrayOf(android.R.color.holo_red_dark),
             requireContext()
         )
-        deathsDataSet.lineWidth = dpInPx.toFloat()
-        deathsDataSet.circleRadius = dpInPx.toFloat()
-        deathsDataSet.valueTextSize = threeDpInPx.toFloat()
+        deathsDataSet.lineWidth = twoSpInPx.toFloat()
+        deathsDataSet.circleRadius = twoSpInPx.toFloat()
+        deathsDataSet.valueTextSize = fourSpInPx.toFloat()
 
         val recoveredDataSet = LineDataSet(recoveredSet, "recovered")
         recoveredDataSet.setColors(
@@ -209,9 +209,9 @@ class TimelineFragment : Fragment() {
             intArrayOf(android.R.color.holo_green_dark),
             requireContext()
         )
-        recoveredDataSet.lineWidth = dpInPx.toFloat()
-        recoveredDataSet.circleRadius = dpInPx.toFloat()
-        recoveredDataSet.valueTextSize = threeDpInPx.toFloat()
+        recoveredDataSet.lineWidth = twoSpInPx.toFloat()
+        recoveredDataSet.circleRadius = twoSpInPx.toFloat()
+        recoveredDataSet.valueTextSize = fourSpInPx.toFloat()
 
         return Triple(casesDataSet, deathsDataSet, recoveredDataSet)
     }

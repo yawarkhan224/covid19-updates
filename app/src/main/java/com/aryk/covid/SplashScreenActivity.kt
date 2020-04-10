@@ -9,7 +9,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalCoroutinesApi
 class SplashScreenActivity : AppCompatActivity() {
     companion object {
-        private const val SPLASH_SCREEN_DELAY_MS = 500L
+        private const val SPLASH_SCREEN_DELAY_MS = 250L
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

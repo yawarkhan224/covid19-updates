@@ -66,7 +66,7 @@ class DeviceHelper {
 
     fun convertSpToPixel(sp: Float): Int {
         val metrics = Resources.getSystem().displayMetrics
-        val px = sp * (metrics.scaledDensity / 160f)
+        val px = sp * metrics.scaledDensity
         return px.roundToInt()
     }
 
