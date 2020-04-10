@@ -4,8 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aryk.covid.helper.Event
-import com.aryk.covid.models.FormattedHistoricalData
-import com.aryk.covid.models.FormattedTimelineData
 import com.aryk.covid.persistance.LocalDatabase
 import com.aryk.covid.repositories.DataRepository
 import com.aryk.network.models.ningaApi.CountryData
@@ -19,17 +17,13 @@ import kotlinx.coroutines.launch
 
 interface DetailViewModelInputs {
     fun onLoadData()
-    fun onDataAvailable(data: CountryData, historicalData: FormattedHistoricalData?)
-    fun onLoadHistoricalData()
+    fun onDataAvailable(data: CountryData)
     fun onLoadDataFromDb()
 }
 
 @ExperimentalCoroutinesApi
 interface DetailViewModelOutputs {
     val countryData: MutableLiveData<Event<CountryData>>
-    val historicalCountryData: MutableLiveData<Event<Pair<FormattedHistoricalData?, Boolean>>>
-    val showHistoricalData: MutableLiveData<Event<Unit>>
-    val historicalData: MutableLiveData<Event<FormattedTimelineData>>
     val isLoading: MutableLiveData<Event<Boolean>>
 }
 
@@ -46,10 +40,6 @@ class DetailViewModel(
     private val localDatabase: LocalDatabase
 ) : ViewModel(), DetailViewModelInterface, DetailViewModelInputs, DetailViewModelOutputs {
     override val countryData: MutableLiveData<Event<CountryData>> = MutableLiveData()
-    override val historicalCountryData:
-            MutableLiveData<Event<Pair<FormattedHistoricalData?, Boolean>>> = MutableLiveData()
-    override val showHistoricalData: MutableLiveData<Event<Unit>> = MutableLiveData()
-    override val historicalData: MutableLiveData<Event<FormattedTimelineData>> = MutableLiveData()
     override val isLoading: MutableLiveData<Event<Boolean>> = MutableLiveData()
 
     private val onLoadDataProperty: Channel<Unit> = Channel(1)
@@ -61,18 +51,9 @@ class DetailViewModel(
     }
 
     private val onDataAvailableProperty: Channel<CountryData> = Channel(1)
-    private val onHistoricalDataAvailableProperty: Channel<FormattedHistoricalData?> = Channel(1)
-    override fun onDataAvailable(data: CountryData, historicalData: FormattedHistoricalData?) {
+    override fun onDataAvailable(data: CountryData) {
         viewModelScope.launch {
-            onHistoricalDataAvailableProperty.send(historicalData)
             onDataAvailableProperty.send(data)
-        }
-    }
-
-    private val onLoadHistoricalDataProperty: Channel<Unit> = Channel(1)
-    override fun onLoadHistoricalData() {
-        viewModelScope.launch {
-            onLoadHistoricalDataProperty.send(Unit)
         }
     }
 
@@ -91,7 +72,6 @@ class DetailViewModel(
         super.onCleared()
 
         onDataAvailableProperty.cancel()
-        onHistoricalDataAvailableProperty.cancel()
     }
 
     init {
@@ -99,12 +79,6 @@ class DetailViewModel(
             onDataAvailableProperty.consumeEach { data ->
                 countryName = data.country
                 countryData.value = Event(data)
-            }
-        }
-
-        viewModelScope.launch {
-            onHistoricalDataAvailableProperty.consumeEach { data ->
-                historicalCountryData.value = Event(Pair(data, false))
             }
         }
 

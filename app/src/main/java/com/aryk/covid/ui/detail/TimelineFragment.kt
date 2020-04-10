@@ -6,8 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import coil.api.load
 import com.aryk.covid.R
 import com.aryk.covid.helper.DeviceHelper
+import com.aryk.covid.helper.TimeHelper
+import com.aryk.network.models.ningaApi.CountryData
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.XAxis.XAxisPosition
 import com.github.mikephil.charting.data.Entry
@@ -17,23 +20,22 @@ import kotlinx.android.synthetic.main.fragment_timeline.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.Locale
 
 /**
  * A simple [Fragment] subclass.
  */
-@SuppressWarnings("ForbiddenComment", "MagicNumber")
+@SuppressWarnings("ForbiddenComment", "MagicNumber", "LongMethod", "ComplexMethod")
 @ExperimentalCoroutinesApi
 class TimelineFragment : Fragment() {
     companion object {
-        private const val ARG_SELECTED_COUNTRY_ISO2 = "selected_country_iso2"
+        private const val ARG_SELECTED_COUNTRY = "selected_country"
 
         fun newInstance(
-            iso2: String?
+            country: CountryData
         ): TimelineFragment {
             val args: Bundle = Bundle()
-            iso2?.let {
-                args.putString(ARG_SELECTED_COUNTRY_ISO2, iso2)
-            }
+            args.putParcelable(ARG_SELECTED_COUNTRY, country)
             val fragment = TimelineFragment()
             fragment.arguments = args
             return fragment
@@ -42,6 +44,7 @@ class TimelineFragment : Fragment() {
 
     private val timelineViewModel: TimelineViewModel by viewModel()
     private val deviceHelper: DeviceHelper by inject()
+    private val timeHelper: TimeHelper by inject()
     private var selectedCountryISO2: String? = null
 
     override fun onCreateView(
@@ -56,12 +59,34 @@ class TimelineFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        arguments?.getString(ARG_SELECTED_COUNTRY_ISO2)?.let {
-            selectedCountryISO2 = it
+        arguments?.getParcelable<CountryData>(ARG_SELECTED_COUNTRY)?.let {
+            selectedCountryISO2 = it.countryInfo?.iso2 ?: it.country
+            timelineViewModel.inputs.onDataAvailable(it)
             timelineViewModel.inputs.onLoadHistoricalData(selectedCountryISO2)
         } ?: kotlin.run {
             // TODO: Data Missing, Handle this case
         }
+
+        timelineViewModel.outputs.countryData.observe(viewLifecycleOwner, Observer { event ->
+            event.getContentIfNotHandled()?.let { countryData ->
+                countryData.countryInfo?.flag?.let { url ->
+                    flag.load(url)
+                }
+                countryName.text = countryData.country
+
+                countryData.updated?.let { updatedAtString ->
+                    updatedAt.text = getString(
+                        R.string.last_updated,
+                        timeHelper.unixTimeStampInSecondsToLongDateTime(
+                            updatedAtString.toLong(),
+                            Locale.getDefault()
+                        )
+                    )
+                } ?: run {
+                    updatedAt.text = "-"
+                }
+            }
+        })
 
         timelineSwipeRefresh.setOnRefreshListener {
             timelineViewModel.inputs.onLoadHistoricalData(selectedCountryISO2)
@@ -71,6 +96,7 @@ class TimelineFragment : Fragment() {
         timelineViewModel.outputs.historicalData.observe(viewLifecycleOwner, Observer { event ->
             event.getContentIfNotHandled()?.let { timelineData ->
                 timelineChart.visibility = View.GONE
+                infoCard.visibility = View.GONE
                 errorView.visibility = View.GONE
 
                 timelineData.let { map ->
@@ -95,6 +121,7 @@ class TimelineFragment : Fragment() {
                     )
 
                     timelineChart.visibility = View.VISIBLE
+                    infoCard.visibility = View.VISIBLE
                 }
             }
         })
@@ -110,8 +137,13 @@ class TimelineFragment : Fragment() {
         })
 
         timelineViewModel.outputs.showErrorView.observe(viewLifecycleOwner, Observer { event ->
-            event.getContentIfNotHandled()?.let { showError ->
+            event.getContentIfNotHandled()?.let { (showError, optionalMessage) ->
                 errorView.visibility = if (showError) {
+                    optionalMessage?.let {
+                        errorView.text = getString(it)
+                    } ?: run {
+                        errorView.text = getString(R.string.dataMissing)
+                    }
                     View.VISIBLE
                 } else {
                     View.GONE

@@ -20,9 +20,9 @@ class DetailAndTimelineFragmentStatePagerAdapter(
 ) : FragmentStatePagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     override fun getItem(position: Int): Fragment {
         return if (position == 0) {
-            DetailFragment.newInstance(countryData, null)
+            DetailFragment.newInstance(countryData)
         } else {
-            TimelineFragment.newInstance(countryData.countryInfo?.iso2 ?: countryData.country)
+            TimelineFragment.newInstance(countryData)
         }
     }
 

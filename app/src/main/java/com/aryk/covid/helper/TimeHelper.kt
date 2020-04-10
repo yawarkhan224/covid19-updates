@@ -3,8 +3,8 @@ package com.aryk.covid.helper
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
-import java.util.Date
 import java.util.Calendar
+import java.util.Date
 
 /**
  * class which helps to convert api times to system times
@@ -37,6 +37,18 @@ class TimeHelper(
      */
     fun getCurrentDay(): Int {
         return Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
+    }
+
+    /**
+     * @return current date of the device
+     */
+    fun getCurrentDate(locale: Locale): String {
+        val dateFormat = DateFormat.getDateInstance(
+            DateFormat.SHORT,
+            locale
+        )
+
+        return dateFormat.format(Calendar.getInstance().time)
     }
 
     /**

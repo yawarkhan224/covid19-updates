@@ -168,9 +168,14 @@ class HomeFragment : Fragment() {
                 position: Int,
                 id: Long
             ) {
+                if (selected == position) {
+                    return
+                }
+
                 selected = position
+
                 val x = (resources.getStringArray(R.array.sort_countries_list_by))[position]
-                homeViewModel.inputs.onSortData(CountriesSortType.fromSorterName(x)!!.key)
+                homeViewModel.inputs.onLoadData(CountriesSortType.fromSorterName(x)!!.key)
             }
         }
     }

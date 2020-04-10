@@ -9,7 +9,6 @@ import androidx.lifecycle.Observer
 import coil.api.load
 import com.aryk.covid.R
 import com.aryk.covid.helper.TimeHelper
-import com.aryk.covid.models.FormattedHistoricalData
 import com.aryk.network.models.ningaApi.CountryData
 import kotlinx.android.synthetic.main.fragment_detail.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,15 +21,12 @@ import java.util.Locale
 class DetailFragment : Fragment() {
     companion object {
         private const val ARG_SELECTED_COUNTRY = "selected_country"
-        private const val ARG_HISTORICAL_DATA = "historical_data"
 
         fun newInstance(
-            country: CountryData,
-            historicalData: FormattedHistoricalData?
+            country: CountryData
         ): DetailFragment {
             val args: Bundle = Bundle()
             args.putParcelable(ARG_SELECTED_COUNTRY, country)
-            args.putParcelable(ARG_HISTORICAL_DATA, historicalData)
             val fragment = DetailFragment()
             fragment.arguments = args
             return fragment
@@ -58,10 +54,7 @@ class DetailFragment : Fragment() {
                 // TODO: Handle error for data loading failure
             }
 
-            detailViewModel.inputs.onDataAvailable(
-                it,
-                arguments?.getParcelable<FormattedHistoricalData>(ARG_HISTORICAL_DATA)
-            )
+            detailViewModel.inputs.onDataAvailable(it)
         } ?: kotlin.run {
             // TODO: Data Missing, Handle this case
         }
@@ -86,6 +79,10 @@ class DetailFragment : Fragment() {
 
         detailViewModel.outputs.countryData.observe(viewLifecycleOwner, Observer { event ->
             event.getContentIfNotHandled()?.let { countryData ->
+
+                countryName.text = countryData.country
+
+                todayDate.text = timeHelper.getCurrentDate(Locale.getDefault())
 
                 todayCasesValue.text = countryData.todayCases.toString()
                 todayDeathsValue.text = countryData.todayDeaths.toString()
