@@ -1,5 +1,5 @@
 import java.io.FileInputStream
-import java.util.Properties
+import java.util.*
 
 plugins {
     id("com.android.application")
@@ -12,12 +12,18 @@ plugins {
 android {
     compileSdkVersion(ConfigValues.compile)
 
+    val versionMajor: String by project
+    val versionMinor: String by project
+    val versionPatch: String by project
+    val versionBuild: String by project
+
     defaultConfig {
         applicationId = "com.aryk.covid"
         minSdkVersion(ConfigValues.min)
         targetSdkVersion(ConfigValues.target)
-        versionCode = 1
-        versionName = "1.0"
+
+        versionCode = versionMajor.toInt() * 100000 + versionMinor.toInt() * 10000 + versionPatch.toInt() * 1000 + versionBuild.toInt()
+        versionName = "${versionMajor.toInt()}.${versionMinor.toInt()}.${versionPatch.toInt()}"
 
         kapt {
             arguments {
