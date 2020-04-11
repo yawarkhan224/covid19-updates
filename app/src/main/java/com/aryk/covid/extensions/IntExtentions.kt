@@ -1,5 +1,7 @@
 package com.aryk.covid.extensions
 
+import java.text.NumberFormat
+
 @SuppressWarnings("MagicNumber")
 fun Int.toShorterFormatString(): String {
     return when {
@@ -15,5 +17,13 @@ fun Int.toShorterFormatString(): String {
         else -> {
             this.toString()
         }
+    }
+}
+
+fun Int?.toLocalFormattedString(): String {
+    this?.let {
+        return NumberFormat.getInstance().format(it)
+    } ?: run {
+        return "_"
     }
 }

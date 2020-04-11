@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import coil.api.load
 import com.aryk.covid.R
+import com.aryk.covid.extensions.toLocalFormattedString
 import com.aryk.covid.helper.TimeHelper
 import com.aryk.network.models.ningaApi.CountryData
 import kotlinx.android.synthetic.main.fragment_detail.*
@@ -84,18 +85,19 @@ class DetailFragment : Fragment() {
 
                 todayDate.text = timeHelper.getCurrentDate(Locale.getDefault())
 
-                todayCasesValue.text = countryData.todayCases.toString()
-                todayDeathsValue.text = countryData.todayDeaths.toString()
+                todayCasesValue.text = countryData.todayCases.toLocalFormattedString()
+                todayDeathsValue.text = countryData.todayDeaths.toLocalFormattedString()
 
-                perMillionCasesValue.text = countryData.casesPerOneMillion.toString()
-                perMillionDeathsValue.text = countryData.deathsPerOneMillion.toString()
-                perMillionTestsValue.text = countryData.testsPerOneMillion.toString()
+                perMillionCasesValue.text = countryData.casesPerOneMillion.toLocalFormattedString()
+                perMillionDeathsValue.text =
+                    countryData.deathsPerOneMillion.toLocalFormattedString()
+                perMillionTestsValue.text = countryData.testsPerOneMillion.toLocalFormattedString()
 
-                totalCasesValue.text = countryData.cases.toString()
-                totalDeathsValue.text = countryData.deaths.toString()
-                totalTestsValue.text = countryData.tests.toString()
-                totalRecoveredValue.text = countryData.recovered.toString()
-                totalCriticalValue.text = countryData.critical.toString()
+                totalCasesValue.text = countryData.cases.toLocalFormattedString()
+                totalDeathsValue.text = countryData.deaths.toLocalFormattedString()
+                totalTestsValue.text = countryData.tests.toLocalFormattedString()
+                totalRecoveredValue.text = countryData.recovered.toLocalFormattedString()
+                totalCriticalValue.text = countryData.critical.toLocalFormattedString()
 
                 countryData.updated?.let { updatedAtString ->
                     updatedAt.text = getString(
