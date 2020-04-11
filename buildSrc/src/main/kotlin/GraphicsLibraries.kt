@@ -10,7 +10,6 @@ object GraphicsLibraries {
 
         // circleimageview
         const val circleimageview = "3.1.0"
-        const val circularimageview = "4.2.0"
     }
 
     // mpAndroidChart
@@ -18,7 +17,6 @@ object GraphicsLibraries {
 
     // circleimageview
     const val circleimageview = "de.hdodenhof:circleimageview:${Versions.circleimageview}"
-    const val circularimageview = "com.mikhaellopez:circularimageview:${Versions.circleimageview}"
 }
 
 fun DependencyHandlerScope.graphicsDependencies() {
@@ -27,5 +25,4 @@ fun DependencyHandlerScope.graphicsDependencies() {
 
     // circleimageview
     "implementation"(GraphicsLibraries.circleimageview)
-    "implementation"(GraphicsLibraries.circularimageview)
 }
