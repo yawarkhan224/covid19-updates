@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="library_name" translatable="false">
+        <item>Kotlin</item>
+        <item>Kotlinx Coroutines</item>
+        <item>Koin</item>
+        <item>Gson</item>
+        <item>LeakCanary</item>
+        <item>OkHttp</item>
+        <item>Retrofit</item>
+        <item>coil</item>
+        <item>MPAndroidChart</item>
+        <item>CircleImageView</item>
+        <item>MockK</item>
+        <item>detekt</item>
+        <item>ktlint</item>
+        <item>Thermometer Icon</item>
+    </string-array>
+
+    <string-array name="library_web_link" translatable="false">
+        <item>https://github.com/JetBrains/kotlin</item>
+        <item>https://github.com/Kotlin/kotlinx.coroutines/blob/master/LICENSE.txt</item>
+        <item>https://github.com/InsertKoinIO/koin/blob/master/LICENSE</item>
+        <item>https://github.com/google/gson/blob/master/LICENSE</item>
+        <item>https://github.com/square/leakcanary#license</item>
+        <item>https://github.com/square/okhttp#license</item>
+        <item>https://github.com/square/retrofit#license</item>
+        <item>https://github.com/coil-kt/coil/blob/master/LICENSE.txt</item>
+        <item>https://github.com/PhilJay/MPAndroidChart/blob/master/LICENSE</item>
+        <item>https://github.com/hdodenhof/CircleImageView/blob/master/LICENSE.txt</item>
+        <item>https://github.com/mockk/mockk</item>
+        <item>https://github.com/arturbosch/detekt/blob/master/LICENSE</item>
+        <item>https://github.com/pinterest/ktlint/blob/master/LICENSE</item>
+        <item>https://www.flaticon.com/authors/fps-web-agency</item>
+    </string-array>
+</resources>

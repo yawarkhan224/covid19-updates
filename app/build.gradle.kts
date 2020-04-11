@@ -22,7 +22,11 @@ android {
         minSdkVersion(ConfigValues.min)
         targetSdkVersion(ConfigValues.target)
 
-        versionCode = versionMajor.toInt() * 100000 + versionMinor.toInt() * 10000 + versionPatch.toInt() * 1000 + versionBuild.toInt()
+        versionCode = versionMajor.toInt() * 100000 +
+                versionMinor.toInt() * 10000 +
+                versionPatch.toInt() * 1000 +
+                versionBuild.toInt()
+
         versionName = "${versionMajor.toInt()}.${versionMinor.toInt()}.${versionPatch.toInt()}"
 
         kapt {

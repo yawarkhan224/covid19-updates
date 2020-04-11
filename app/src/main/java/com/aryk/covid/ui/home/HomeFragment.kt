@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -20,6 +21,7 @@ import com.aryk.covid.enums.CountriesSortType
 import com.aryk.covid.helper.ItemClickSupport
 import com.aryk.covid.ui.detail.DetailAndTimelineFragment
 import com.aryk.covid.ui.home.adapter.CountryListAdapter
+import com.aryk.covid.ui.legal.LegalInfoFragment
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -183,5 +185,23 @@ class HomeFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(SORT_SPINNER, spinner.selectedItemPosition)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.aboutApp) {
+            parentFragmentManager
+                .beginTransaction()
+                .addToBackStack(FRAGMENT_TAG)
+                .add(
+                    R.id.nav_host_fragment,
+                    LegalInfoFragment(),
+                    "legal_info_fragment"
+                )
+                .commit()
+
+            return true
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 }
