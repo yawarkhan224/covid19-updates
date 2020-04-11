@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -25,12 +28,29 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        val signingRelease = Properties()
+        signingRelease.load(
+            FileInputStream(
+                rootProject.file("../certificates/covid19-updates/keystore.properties")
+            )
+        )
+        create("release") {
+            storeFile = rootProject.file(signingRelease.getProperty("storeFile"))
+            storePassword = signingRelease.getProperty("storePassword")
+            keyAlias = signingRelease.getProperty("keyReleaseAlias")
+            keyPassword = signingRelease.getProperty("keyReleasePassword")
+        }
+    }
+
     buildTypes {
         maybeCreate("release").apply {
+            signingConfig = signingConfigs.getByName("release")
+            isShrinkResources = true
             isMinifyEnabled = true
             proguardFiles(
-                    getDefaultProguardFile("proguard-android-optimize.txt"),
-                    "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
             )
         }
 
@@ -79,15 +99,15 @@ dependencies {
     debugImplementation(CodeQualityLibraries.leakCanary)
 }
 
-tasks.register < JavaExec > ("ktlint") {
+tasks.register<JavaExec>("ktlint") {
     group = "verification"
     description = "Check Kotlin code style."
     classpath = ktlint
     main = "com.pinterest.ktlint.Main"
     args(
-            "--reporter=plain",
-            "--reporter=checkstyle,output=$buildDir/ktlint/checkstyle-result.xml",
-            "--android"
+        "--reporter=plain",
+        "--reporter=checkstyle,output=$buildDir/ktlint/checkstyle-result.xml",
+        "--android"
     )
 }
 
@@ -95,14 +115,14 @@ tasks.named("check") {
     dependsOn(ktlint)
 }
 
-tasks.register < JavaExec > ("ktlintFormat") {
+tasks.register<JavaExec>("ktlintFormat") {
     group = "formatting"
     description = "Fix Kotlin code style deviations."
     classpath = ktlint
     main = "com.pinterest.ktlint.Main"
     args(
-            "--reporter=plain",
-            "--reporter=checkstyle,output=$buildDir/ktlint/checkstyle-result.xml",
-            "--android"
+        "--reporter=plain",
+        "--reporter=checkstyle,output=$buildDir/ktlint/checkstyle-result.xml",
+        "--android"
     )
 }
