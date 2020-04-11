@@ -1,0 +1,604 @@
+# Customise this file, documentation can be found here:
+# https://github.com/fastlane/fastlane/tree/master/fastlane/docs
+# All available actions: https://docs.fastlane.tools/actions
+# can also be listed using the `fastlane actions` command
+
+# Change the syntax highlighting to Ruby
+# All lines starting with a # are ignored when running `fastlane`
+
+# If you want to automatically update fastlane if a new version is available:
+# update_fastlane
+
+# This is the minimum version number required.
+# Update this, if you use features of a newer version
+# Setting to 2.135.0 as it is required to continue uploading to Google Play with AndroidPublisherV3
+# Setting to 2.136.0 as 2.135.x breaking changelog file finding by version_code
+min_fastlane_version("2.136.0")
+
+default_platform(:android)
+
+platform :android do
+  #########################################################################################################
+  ################################### Misc
+  #########################################################################################################
+
+  desc "Builds the app for production"
+  lane :build do |options|
+    version_number = options[:version_number]
+    build_number = options[:build_number].nil? ? 1 : options[:build_number]
+    build_type = options[:build_type].nil? ? "release" : options[:build_type]
+    build_apk = options[:build_apk].nil? ? false : options[:build_apk]
+    is_ci_build = options[:is_ci_build].nil? ? false : options[:is_ci_build]
+
+    raise "Missing version number: use version_number parameter" unless version_number != nil
+
+    splitted_version_number = split_version_number(version_number)
+
+    major = splitted_version_number[0]
+    minor = splitted_version_number[1]
+    patch = splitted_version_number[2]
+
+    raise "Wrong version number format: Version number format must be major.minor.patch" unless major != nil && minor != nil && patch != nil
+
+    properties = {:major => major, :minor => minor, :patch => patch, :bld => build_number, :isci => is_ci_build}
+
+    gradleTask = "clean"
+
+    # check if we want to create an app bundle or if we want to build an apk
+    buildTaskPrefix = "bundle"
+
+    if build_apk
+      buildTaskPrefix = "assemble"
+    end
+
+    gradleTask += " #{buildTaskPrefix}#{build_type.capitalize}"
+
+    # execute the gradle task
+    gradle(
+      task: gradleTask,
+      properties: properties
+    )
+  end
+
+  private_lane :upload do |options|
+    track = options[:track]
+    skip_upload_metadata = options[:skip_upload_metadata].nil? ? true : options[:skip_upload_metadata]
+    skip_upload_changelogs = options[:skip_upload_changelogs].nil? ? true : options[:skip_upload_changelogs]
+    skip_upload_images = options[:skip_upload_images].nil? ? true : options[:skip_upload_images]
+    skip_upload_screenshots = options[:skip_upload_screenshots].nil? ? true : options[:skip_upload_screenshots]
+    package_name = options[:package_name].nil? ? "com.aryk.covid" : options[:package_name]
+    build_type = options[:build_type].nil? ? "release" : options[:build_type]
+    version_number = options[:version_number]
+    raise "version number missing" unless version_number != nil
+    build_number = options[:build_number].nil? ? 1 : options[:build_number]
+    version_code = version_code_number(version_number, build_number)
+
+    raise "Missing track: use track parameter" unless track != nil
+
+    # upload app bundle to the play store
+    supply(
+      package_name: package_name,
+      aab: "app/build/outputs/bundle/#{build_type.capitalize}/app-release.aab",
+      track: track,
+      skip_upload_apk: true,
+      skip_upload_metadata: skip_upload_metadata,
+      skip_upload_changelogs: skip_upload_changelogs,
+      skip_upload_images: skip_upload_images,
+      skip_upload_screenshots: skip_upload_screenshots,
+      metadata_path: "fastlane/metadata/android",
+      version_code: version_code
+    )
+  end
+
+  #########################################################################################################
+  ################################### Functions
+  #########################################################################################################
+
+  def version_code_number(version_number, build_number)
+    version_split = split_version_number(version_number)
+    version_split[0].to_i * 100000 + version_split[1].to_i * 10000 + version_split[2].to_i * 1000 + build_number.to_i * 1
+  end
+
+  def split_version_number(version_number)
+    version_number.split(".")
+  end
+
+  # get the version name from the current branch
+  def version_number_from_branch_name(branch_name)
+    matches = /\/(\d\.\d\.\d)/.match(branch_name) # valid version_number are 1.0.0 or 1.0.1 or 1.2.1 etc...
+    matches[1].to_s
+  end
+
+  # returns the type of the current git branch (for git flow)
+  # whether hotfix or release, nil if any other
+  # => hotfix/1.0.2 returns "hotfix"
+  # => release/1.1.1 returns "release"
+  # => develop returns nil
+  def version_type(branch_name)
+    /(release|hotfix)/.match(branch_name).to_s
+  end
+
+  #########################################################################################################
+  ################################### Preparation
+  #########################################################################################################
+
+  before_all do
+    if is_ci? then
+      #setup_jenkins
+      #reset_git_repo(force: true) # disable for jenkins pipeline jobs
+      #ensure_git_status_clean # disable for jenkins pipeline jobs
+      #reset_simulators
+    end
+
+    git_pull(only_tags: true)
+  end
+
+  #########################################################################################################
+  ################################### TESTING
+  #########################################################################################################
+  desc "runs UnitTests"
+    lane :runUnitTests do |options|
+      build_type = options[:build_type].nil? ? "debug" : options[:build_type]
+
+      gradle(
+        task: "test#{build_type.capitalize}UnitTestCoverage"
+      )
+  end
+
+ desc "checks App for linting errors using standard android linter"
+ lane :runLint do
+    gradle(
+      task: "lintDebug"
+    )
+ end
+
+ desc "checks App for linting errors using Klint"
+  lane :runKtlint do
+    gradle(
+      task: "ktlint"
+    )
+  end
+
+  desc "checks App for linting errors using Klint"
+    lane :runDetekt do
+      gradle(
+        task: "detektAll"
+      )
+    end
+
+  #########################################################################################################
+  ################################### CREATING BRANCHES (HOTFIX/RELEASE)
+  #########################################################################################################
+  desc "-----------------------------------------------------------------------------"
+  desc "Lane to create a git flow branch for the given type (either \"hotfix\" or \"release\") and push to remote."
+  desc "-----------------------------------------------------------------------------"
+  private_lane :prepare_version do |options|
+    version_number = options[:version_number]
+    type = options[:type]
+
+    raise "Missing version number: use version_number parameter" unless version_number != nil
+
+    ensure_git_status_clean
+    if type == "hotfix"
+      sh ("git checkout master")
+      ensure_git_branch(branch: "master")
+    elsif type == "release"
+      sh ("git checkout develop")
+      ensure_git_branch(branch: "develop")
+    else
+      raise "Invalid value for parameter \"type\""
+    end
+
+    git_pull
+    sh ("git flow #{type} start #{version_number}")
+    ensure_git_branch(branch: "(release\\S+|hotfix\\S+)") #if success should be on release/ or hotfix/ now
+
+    push_to_git_remote
+
+    puts "-----------------------------------------------------------------------------"
+    puts "Branch creation successfully. You are now on #{git_branch}"
+    puts "Do your last minute changes (changelog, metadata, ...)"
+    puts "and run \"fastlane alpha\""
+    puts "to submit a build to the PlayStore as alpha."
+    puts "-----------------------------------------------------------------------------"
+  end
+
+  desc "-----------------------------------------------------------------------------"
+  desc "Creates Hotfix Branch for a given version_number"
+  desc "typical hotfix:"
+  desc "1. fastlane prepare_hotfix version_number:1.1.1"
+  desc "2. fix these nasty bugs ;)"
+  desc "3. (do metadata stuff, check release notes)"
+  desc "4. fastlane alpha"
+  desc "5. fastlane submit_latest_version"
+  desc "-----------------------------------------------------------------------------"
+  lane :prepare_hotfix do |options|
+    prepare_version(version_number: options[:version_number], type: "hotfix")
+  end
+
+  desc "-----------------------------------------------------------------------------"
+  desc "Creates Release Branch for a given version_number"
+  desc "typical release:"
+  desc "1. fastlane prepare_release version_number:1.1.0"
+  desc "2. (do metadata stuff, check release notes)"
+  desc "3. fastlane alpha"
+  desc "4. (test via the PlayStore!)"
+  desc "(5. You can update the release branch with latest develop changes via lane \"update_release_branch\")"
+  desc "(6. If you update, run step 3 again!)"
+  desc "7. fastlane submit_latest_version"
+  desc "-----------------------------------------------------------------------------"
+  lane :prepare_release do |options|
+    prepare_version(version_number: options[:version_number], type: "release")
+  end
+
+  #########################################################################################################
+  ################################### Updating Branches
+  #########################################################################################################
+
+  desc "Update a release branch for a given version_number (e.g. 1.0.0)"
+  desc "Does a checkout on develop and pulls all latest changes!"
+  desc "Updates existing release branch with develop changes"
+  lane :update_release_branch do |options|
+    ensure_git_branch(branch: "(release\\S+)") #if success should be on release/ now
+
+    current_branch = git_branch
+    version_number = version_number_from_branch_name(current_branch)
+
+    raise "Could not parse version number from branch name. Check branch." unless version_number != nil
+
+    ensure_git_status_clean
+    sh ("git checkout develop")
+    ensure_git_branch(branch: "develop")
+    git_pull
+    sh ("git checkout release/#{version_number}")
+    ensure_git_status_clean
+    sh ("git merge develop")
+    ensure_git_status_clean
+    ensure_git_branch(branch: "(release\\S+)") #if success should be on release/ now
+
+    push_to_git_remote
+  end
+
+  #########################################################################################################
+  ################################### FINISH BRANCHES
+  #########################################################################################################
+
+  desc "Finishes a rollout by closing the release branch and setting a release tag"
+  lane :finish_rollout do |options|
+    # tmp save current branch name
+    current_branch = git_branch
+
+    type = version_type(current_branch)
+    raise "Bad branch! Possible values are \"hotfix\" or \"release\"" unless type == "hotfix" || type == "release"
+
+    version_number = version_number_from_branch_name(current_branch)
+    raise "Could not parse version number from branch name. Check branch." unless version_number != nil
+
+    build_number = options[:build_number].nil? ? 1 : options[:build_number]
+
+    # switch to master and develop and pull latest changes to make sure finishing git flow works as expected
+    sh ("git checkout master")
+    git_pull
+    ensure_git_status_clean
+    sh ("git checkout develop")
+    git_pull
+    ensure_git_status_clean
+
+    # everything's fine
+    # back to current branch
+    sh ("git checkout #{current_branch}")
+
+    if type == "hotfix"
+      ensure_git_branch(branch: "(hotfix\\S+)") #if hotfix, should be on some hotfix branch
+    elsif
+      ensure_git_branch(branch: "(release\\S+)") #if normal release, should be on release branch
+    end
+
+    sh ("git flow #{type} finish -n #{version_number}")
+    sh ("git checkout master") # release finish changes to develop so we need to go master
+
+    ensure_git_branch(branch: "(master)")
+    ensure_git_status_clean
+
+    add_git_tag(tag:"release/#{version_number}/#{build_number}")
+    push_to_git_remote #after finish will only push current branch (develop in case of release, master in case of hotfix)
+
+    # merge is done to both branches when finishing so we need to push the remaining branch too
+    # master pushed above, push develop too
+    sh ("git checkout develop")
+    push_to_git_remote
+  end
+
+  #########################################################################################################
+  ################################### INTERNAL
+  #########################################################################################################
+
+  desc "Uploads an internal build to the PlayStore"
+  desc "Requires branch to be on a correct version number e.g. hotfix/1.0.1"
+  lane :internal do |options|
+    ensure_git_branch(branch: "(release\\S+|hotfix\\S+)") #if success should be on release/ or hotfix/ now
+
+    current_branch = git_branch
+
+    version_number = version_number_from_branch_name(current_branch)
+    raise "Could not parse version number from branch name. Check branch." unless version_number != nil
+
+    type = version_type(current_branch)
+    raise "Bad branch! Possible values are \"hotfix\" or \"release\"" unless type == "hotfix" || type == "release"
+
+    # TODO CHECK RELEASE NOTES BEFORE DOING ANYTHING
+
+
+    # build
+    build(options.merge(version_number: version_number))
+
+    upload_internal(options.merge(package_name: 'com.aryk.covid', version_number: version_number))
+  end
+
+  desc "Uploads a new internal build to the PlayStore"
+  lane :upload_internal do |options|
+    # submit to the play store
+    upload(options.merge(
+      track: "internal",
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    ))
+  end
+
+  #########################################################################################################
+  ################################### ALPHA
+  #########################################################################################################
+
+  desc "Uploads or promotes an alpha build to the PlayStore"
+  desc "Requires branch to be on a correct version number e.g. hotfix/1.0.1"
+  lane :alpha do |options|
+    ensure_git_branch(branch: "(release\\S+|hotfix\\S+)") #if success should be on release/ or hotfix/ now
+
+    current_branch = git_branch
+
+    version_number = version_number_from_branch_name(current_branch)
+    raise "Could not parse version number from branch name. Check branch." unless version_number != nil
+
+    type = version_type(current_branch)
+    raise "Bad branch! Possible values are \"hotfix\" or \"release\"" unless type == "hotfix" || type == "release"
+
+    # TODO CHECK RELEASE NOTES BEFORE DOING ANYTHING
+    doPromote = options[:promote].nil? ? false : options[:promote]
+    if doPromote
+        promote_alpha(options.merge(package_name: 'com.aryk.covid'))
+    else
+      # build
+      build(options.merge(version_number: version_number))
+        upload_alpha(options.merge(package_name: 'com.aryk.covid', version_number: version_number))
+    end
+  end
+
+  desc "Promotes the current alpha track to beta"
+  lane :promote_alpha do |options|
+    package_name = options[:package_name].nil? ? "com.aryk.covid" : options[:package_name]
+    version_number = options[:version_number]
+    raise "version number missing" unless version_number != nil
+    build_number = options[:build_number].nil? ? 1 : options[:build_number]
+    version_code = version_code_number(version_number, build_number)
+
+    supply(
+      package_name: package_name,
+      track:"internal",
+      track_promote_to:"alpha",
+      skip_upload_aab: true,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      metadata_path: "fastlane/metadata/android",
+      version_code: version_code
+    )
+  end
+
+  desc "Uploads a new alpha build to the PlayStore"
+  lane :upload_alpha do |options|
+    # submit to the play store
+    upload(options.merge(
+      track: "alpha",
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    ))
+  end
+
+  #########################################################################################################
+  ################################### BETA
+  #########################################################################################################
+
+  desc "Generates a new beta tag for the given version"
+  desc "Uploads or promotes a beta build to the PlayStore"
+  lane :beta do |options|
+    ensure_git_branch(branch: "(release\\S+|hotfix\\S+)") #if success should be on release/ or hotfix/ now
+
+    current_branch = git_branch
+
+    version_number = version_number_from_branch_name(current_branch)
+    raise "Could not parse version number from branch name. Check branch." unless version_number != nil
+
+    type = version_type(current_branch)
+    raise "Bad branch! Possible values are \"hotfix\" or \"release\"" unless type == "hotfix" || type == "release"
+
+    build_number = options[:build_number].nil? ? 1 : options[:build_number]
+
+    # TODO CHECK RELEASE NOTES BEFORE DOING ANYTHING
+
+    add_git_tag(tag:"beta/#{version_number}/#{build_number}")
+    push_to_git_remote
+
+    doPromote = options[:promote].nil? ? true : options[:promote]
+    if doPromote
+        promote_beta(options.merge(package_name: 'com.aryk.covid'))
+    else
+      # build
+      build(options.merge(version_number: version_number))
+        upload_beta(options.merge(package_name: 'com.aryk.covid', version_number: version_number))
+    end
+  end
+
+  desc "Promotes the current alpha track to beta"
+  lane :promote_beta do |options|
+    package_name = options[:package_name].nil? ? "com.aryk.covid" : options[:package_name]
+    version_number = options[:version_number]
+    raise "version number missing" unless version_number != nil
+    build_number = options[:build_number].nil? ? 1 : options[:build_number]
+    version_code = version_code_number(version_number, build_number)
+
+    supply(
+      package_name: package_name,
+      track:"alpha",
+      track_promote_to:"beta",
+      skip_upload_aab: true,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      metadata_path: "fastlane/metadata/android",
+      version_code: version_code
+    )
+  end
+
+  desc "Uploads a new beta build to the PlayStore"
+  lane :upload_beta do |options|
+    # submit to the play store
+    upload(options.merge(
+      track: "beta",
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    ))
+  end
+
+  #########################################################################################################
+  ################################### RELEASE
+  #########################################################################################################
+
+  desc "Uploads or promotes a build to release in the PlayStore"
+  lane :submit_latest do |options|
+    version_number = options[:version_number]
+    raise "Missing version number: use version_number parameter" unless version_number != nil
+
+    build_number = options[:build_number].nil? ? 1 : options[:build_number]
+
+    ensure_git_branch(
+      branch: "(master|release\\S+|hotfix\\S+)"
+    )
+    ensure_git_status_clean
+
+    doPromote = options[:promote].nil? ? true : options[:promote]
+    if doPromote
+        promote_release(options.merge(build_flavor: 'local', package_name: 'com.aryk.covid', version_number: version_number, build_number: build_number))
+    else
+      # build
+      build(options.merge(version_number: version_number))
+      upload_release(options.merge(package_name: 'com.aryk.covid', version_number: version_number))
+    end
+  end
+
+  desc "-----------------------------------------------------------------------------"
+  desc "Submits the latest beta build to production, updates metadata"
+  desc "finishes the release or hotfix by merging into master / develop and setting a release tag"
+  desc "based on the given type"
+  desc "-----------------------------------------------------------------------------"
+  lane :submit_latest_version do |options|
+    type = version_type(git_branch)
+    raise "Bad branch! Possible values are \"hotfix\" or \"release\"" unless type == "hotfix" || type == "release"
+
+    current_branch = git_branch
+    version_number = version_number_from_branch_name(current_branch)
+
+    raise "Could not parse version number from branch name. Check branch." unless version_number != nil
+
+    submit_latest(options.merge(version_number: version_number))
+    finish_rollout(options.merge(type: type))
+  end
+
+  desc "Promotes the current beta track to production"
+  lane :promote_release do |options|
+    package_name = options[:package_name].nil? ? "com.aryk.covid" : options[:package_name]
+    version_number = options[:version_number]
+    raise "version number missing" unless version_number != nil
+    build_number = options[:build_number].nil? ? 1 : options[:build_number]
+    version_code = version_code_number(version_number, build_number)
+
+    supply(
+      package_name: package_name,
+      track:"beta",
+      track_promote_to:"production",
+      skip_upload_aab: true,
+      skip_upload_metadata: false,
+      skip_upload_changelogs: false,
+      skip_upload_images: false,
+      skip_upload_screenshots: false,
+      metadata_path: "fastlane/metadata/android",
+      version_code: version_code
+    )
+  end
+
+  desc "Uploads a new production build to the PlayStore"
+  lane :upload_release do |options|
+    # submit to the play store
+    upload(options.merge(
+      track: "production",
+      skip_upload_metadata: false,
+      skip_upload_changelogs: false,
+      skip_upload_images: false,
+      skip_upload_screenshots: false
+    ))
+  end
+
+  #########################################################################################################
+  ################################### UPDATE DATA
+  #########################################################################################################
+
+  desc "Updates Metadata on the PlayStore without doing anything else."
+  lane :update_metadata do |options|
+    package_name = options[:package_name].nil? ? "com.aryk.covid" : options[:package_name]
+    version_number = options[:version_number]
+    raise "version number missing" unless version_number != nil
+    build_number = options[:build_number].nil? ? 1 : options[:build_number]
+    version_code = version_code_number(version_number, build_number)
+
+    supply(
+      package_name: package_name,
+      skip_upload_aab: true,
+      metadata_path: "fastlane/metadata/android",
+      version_code: version_code
+    )
+  end
+
+  #########################################################################################################
+  ################################### CLEANUP / NOTIFICATIONS
+  #########################################################################################################
+
+  after_all do |lane|
+    if !is_ci? then
+      notification(
+        subtitle: "COVID-19 Stats",
+        message: "Finished '#{lane}' successfully.",
+        content_image: "app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+      )
+    end
+  end
+
+  error do |lane, exception|
+    # if is_ci? then
+    #     sh "./scripts/closeSimulator.sh"
+    # end
+    if !is_ci? then
+      notification(
+        subtitle: "COVID-19 Stats",
+        message: "Error on lane '#{lane}'!",
+        content_image: "app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+      )
+    end
+  end
+end
