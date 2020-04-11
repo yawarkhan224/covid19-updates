@@ -1,31 +1,47 @@
 <resources>
     <string name="app_name">COVID-19 Stats</string>
 
-    <string name="stats">Statistics</string>
-    <string name="timeline">Timeline</string>
-    <string name="today">Today</string>
-    <string name="total">Total</string>
-    <string name="perMillion">Per million of population</string>
     <string name="sortBy">Sort By</string>
-    <string name="aboutApp">About App</string>
+    <string name="aboutApp">About</string>
 
-    <string name="dataMissing">Unfortunately there seem to be some issue fetching required data. Kindly make sure that you have an active network connection and try again later.</string>
-    <string name="historicalDataMissing">Unfortunately, we could not find any historical data for selected country.</string>
-
-    <!-- For Splash Screen-->
+    <!-- Error Messages -->
+    <string name="dataMissing">A network error has occurred: A problem has occurred with obtaining the data. Please check your internet connection to make sure you have network accessibility.</string>
+    <string name="historicalDataMissing">Due to lack of historical data, the graph for this country cannot be generated.</string>
 
     <!-- For All Countries List View-->
     <string name="country">Country</string>
     <string name="cases">Cases</string>
     <string name="deaths">Deaths</string>
     <string name="recovered">Recovered</string>
-    <string name="active">Active</string>
     <string name="critical">Critical</string>
-    <string name="last_updated">last Update \n%s</string>
-    <string name="tests">Tests</string>
 
     <!-- For Detail View-->
+    <string name="stats">Statistics</string>
+    <string name="timeline">Timeline</string>
+    <string name="today">Today</string>
+    <string name="total">Total</string>
+    <string name="last_updated">Last update \n%s</string>
+    <string name="tests">Tests</string>
+    <string name="perMillion">Per million of population</string>
 
     <!-- For Timeline View -->
-    <string name="chartInfo">This graph shows trend for reported cases, deaths, and patient recovered since and the days.</string>
+    <string name="chartInfo">This graph represents the trend of outbreak based on number of identified patients, reported deaths and recovered cases from the beginning of the pandemic.</string>
+
+    <!-- For Legal View -->
+    <string name="contact">Contact Info</string>
+    <string name="email">Email: </string>
+    <string name="developer">Developer: </string>
+    <string name="designer">Designer: </string>
+    <string name="developer_email_value">ar.yawarkhan@gmail.com</string>
+    <string name="designer_email_value">moritz.thom@th-development.com</string>
+
+    <string name="app_info">App Info</string>
+    <string name="app_version">Version: </string>
+    <string name="app_version_value">%s</string>
+
+    <string name="disclaimer">Disclaimer</string>
+    <string name="disclaimer_value">The App is free to use and does not require any special permissions from the user.\nThe main purpose of this App is to show latest numbers and statistics of COVID-19 Pandemic.\n\nThe data used and displayed in this App is taken from <a href="https://github.com/novelcovid/api">NovelCovid API</a> which further uses <a href="https://www.worldometers.info/coronavirus/">Worldometers</a> and <a href="https://github.com/CSSEGISandData/COVID-19">COVID-19 Data Repository by Johns Hopkins CSSE</a>. We do not take responsibility and hence fourth any liability for any discrepancies in the data.</string>
+
+    <string name="imprint_and_license">Imprint and Licenses</string>
+    <string name="licenses">Licenses</string>
 </resources>
