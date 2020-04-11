@@ -1,0 +1,3 @@
+The App displays a list of all countries with total number of cases, recoveries and deaths as a result of Corona Pandemic.
+
+It also includes cases reported on the current date and the total number of tests performed in the country along with graphical representation of trend of the spread of the outbreak in every country.

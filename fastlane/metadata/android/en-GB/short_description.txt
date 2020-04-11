@@ -1,0 +1,1 @@
+List of countries with sum of cases, recoveries & deaths caused by Covid-19.
