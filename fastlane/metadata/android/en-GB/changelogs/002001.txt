@@ -1,0 +1,3 @@
+Initial release of COVID-19 Stats.
+
+If you have any questions or feedback feel free to drop us an email at ar.yawarkhan@gmail.com.
