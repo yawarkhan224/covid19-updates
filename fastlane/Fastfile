@@ -40,7 +40,7 @@ platform :android do
 
     raise "Wrong version number format: Version number format must be major.minor.patch" unless major != nil && minor != nil && patch != nil
 
-    properties = {:major => major, :minor => minor, :patch => patch, :bld => build_number, :isci => is_ci_build}
+    properties = {:versionMajor => major, :versionMinor => minor, :versionPatch => patch, :bld => build_number}
 
     gradleTask = "clean"
 
@@ -123,13 +123,6 @@ platform :android do
   #########################################################################################################
 
   before_all do
-    if is_ci? then
-      #setup_jenkins
-      #reset_git_repo(force: true) # disable for jenkins pipeline jobs
-      #ensure_git_status_clean # disable for jenkins pipeline jobs
-      #reset_simulators
-    end
-
     git_pull(only_tags: true)
   end
 
@@ -389,7 +382,7 @@ platform :android do
       track_promote_to:"alpha",
       skip_upload_aab: true,
       skip_upload_metadata: true,
-      skip_upload_changelogs: true,
+      skip_upload_changelogs: false,
       skip_upload_images: true,
       skip_upload_screenshots: true,
       metadata_path: "fastlane/metadata/android",
@@ -537,7 +530,7 @@ platform :android do
       skip_upload_metadata: false,
       skip_upload_changelogs: false,
       skip_upload_images: false,
-      skip_upload_screenshots: false,
+      skip_upload_screenshots: true,
       metadata_path: "fastlane/metadata/android",
       version_code: version_code
     )
@@ -580,25 +573,21 @@ platform :android do
   #########################################################################################################
 
   after_all do |lane|
-    if !is_ci? then
-      notification(
-        subtitle: "COVID-19 Stats",
-        message: "Finished '#{lane}' successfully.",
-        content_image: "app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
-      )
-    end
+    notification(
+      subtitle: "COVID-19 Stats",
+      message: "Finished '#{lane}' successfully.",
+      content_image: "app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+    )
   end
 
   error do |lane, exception|
     # if is_ci? then
     #     sh "./scripts/closeSimulator.sh"
     # end
-    if !is_ci? then
-      notification(
-        subtitle: "COVID-19 Stats",
-        message: "Error on lane '#{lane}'!",
-        content_image: "app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
-      )
-    end
+    notification(
+      subtitle: "COVID-19 Stats",
+      message: "Error on lane '#{lane}'!",
+      content_image: "app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+    )
   end
 end
