@@ -7,6 +7,7 @@ plugins {
     id("kotlin-android-extensions")
     id("kotlin-kapt")
     id("com.google.gms.google-services")
+    id("io.fabric")
 }
 
 android {
